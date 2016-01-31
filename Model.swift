@@ -31,3 +31,6 @@ struct Feeds {
     }
 }
 
+class aa {
+    var oo = 9
+}
