@@ -1,16 +1,14 @@
+
 import UIKit
-
-
 
 class WaterfallLayout: UICollectionViewFlowLayout {
     
     var itemLayoutAttributesOfSection = [[UICollectionViewLayoutAttributes]]()
     var columnNumber = 2
     var columnPosition = [CGFloat]()
-    var ratio:Double = 1
+    var ratio:CGFloat = 1
     
     override func prepareLayout() {
-        
         
         let delegate = self.collectionView?.delegate as! WaterfallLayoutDelegate
         
@@ -42,7 +40,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
                 
                 self.ratio = delegate.collectionView(self.collectionView!, layout: self, ratioForItemAtIndexPath: indexPath) ?? self.ratio
                 
-                let itemHeight = itemWidth / CGFloat(ratio)
+                let itemHeight = itemWidth / ratio
                 layoutAttribute.frame.size = CGSize(width: itemWidth, height: itemHeight)
                 let low = self.columnPosition.indexOf(self.columnPosition.minElement()!)!
                 layoutAttribute.frame.origin.x = self.sectionInset.left + (itemWidth + self.minimumInteritemSpacing) * CGFloat(low)
@@ -89,7 +87,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
 
 @objc protocol WaterfallLayoutDelegate: class, UICollectionViewDelegateFlowLayout {
     
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> Double
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat
     
     func collectionViewColumbNum(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout) -> Int
 

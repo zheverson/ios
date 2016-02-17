@@ -6,13 +6,13 @@
 //  Copyright © 2016 jiangjiang. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 struct cell {
     var name: String
     var title: String
     var id: String
-    var ratio: Double
+    var ratio: CGFloat
 }
 
 struct Feeds {
@@ -24,13 +24,9 @@ struct Feeds {
             let name = i["name"] as! String
             let title = i["title"] as! String
             let id = i["id"] as! String
-            let ratio = i["ratio"] as! Double
+            let ratio = i["ratio"] as! CGFloat
             let feed = cell(name: name, title: title, id: id, ratio: ratio)
             feedsData.append(feed)
         }
     }
-}
-
-class aa {
-    var oo = 9
 }

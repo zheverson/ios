@@ -19,9 +19,5 @@ class CollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var video_thumb: UIImageView!
     
     
-    deinit {
-        print("i died")
-    }
-    
 }
 

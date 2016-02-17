@@ -22,7 +22,9 @@ extension UIImageView {
     }
     
     func cancelDownload() {
-        self.getImageTask?.cancel()
+        if self.getImageTask?.state == .Running {
+            self.getImageTask?.cancel()
+        }
     }
     
     private var getImageTask: NSURLSessionDataTask? {

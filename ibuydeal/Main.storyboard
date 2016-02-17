@@ -5,42 +5,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <scenes>
-        <!--Item Detail View Controller-->
-        <scene sceneID="988-3V-k8q">
-            <objects>
-                <viewController storyboardIdentifier="abc" id="oD0-zg-mSW" customClass="ItemDetailViewController" customModule="ibuydeal" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="8LJ-n0-trq"/>
-                        <viewControllerLayoutGuide type="bottom" id="hvz-XW-DeL"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="E1D-xM-HKI">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="j9H-96-t6j">
-                                <rect key="frame" x="0.0" y="20" width="600" height="350"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="350" id="Y33-oq-bsX"/>
-                                </constraints>
-                            </view>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="j9H-96-t6j" firstAttribute="top" secondItem="8LJ-n0-trq" secondAttribute="bottom" id="69K-Ox-k0p"/>
-                            <constraint firstItem="j9H-96-t6j" firstAttribute="leading" secondItem="E1D-xM-HKI" secondAttribute="leading" id="LA3-SD-UVz"/>
-                            <constraint firstAttribute="trailing" secondItem="j9H-96-t6j" secondAttribute="trailing" id="pdY-cz-gF2"/>
-                        </constraints>
-                    </view>
-                    <extendedEdge key="edgesForExtendedLayout"/>
-                    <connections>
-                        <outlet property="videoView" destination="j9H-96-t6j" id="mxI-Ra-6Wv"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Pjo-I8-3dT" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="538" y="-414"/>
-        </scene>
         <!--ALICE-->
         <scene sceneID="3ES-OD-z4U">
             <objects>

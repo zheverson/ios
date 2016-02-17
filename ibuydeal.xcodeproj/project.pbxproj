@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3391F3CB1C74813500FD8D84 /* videoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3391F3CA1C74813500FD8D84 /* videoView.swift */; };
 		33B327431C5E204900E4B470 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B327421C5E204900E4B470 /* ImageView.swift */; };
 		33CDADD11C5C85AD00D5E666 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CDADD01C5C85AD00D5E666 /* AppDelegate.swift */; };
 		33CDADD31C5C85F000D5E666 /* ContentCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CDADD21C5C85F000D5E666 /* ContentCollectionViewController.swift */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3391F3CA1C74813500FD8D84 /* videoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = videoView.swift; sourceTree = SOURCE_ROOT; };
 		33B327421C5E204900E4B470 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = SOURCE_ROOT; };
 		33CDADD01C5C85AD00D5E666 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ../AppDelegate.swift; sourceTree = "<group>"; };
 		33CDADD21C5C85F000D5E666 /* ContentCollectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentCollectionViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -111,6 +113,7 @@
 			children = (
 				33CDADE21C5C908C00D5E666 /* View.swift */,
 				33B327421C5E204900E4B470 /* ImageView.swift */,
+				3391F3CA1C74813500FD8D84 /* videoView.swift */,
 				33CDADD61C5C864200D5E666 /* Animator.swift */,
 			);
 			name = View;
@@ -193,6 +196,7 @@
 				33CDADD71C5C864200D5E666 /* Animator.swift in Sources */,
 				33CDADDD1C5C86A900D5E666 /* ItemDetailViewController.swift in Sources */,
 				33CDADD51C5C861100D5E666 /* WaterFallLayout.swift in Sources */,
+				3391F3CB1C74813500FD8D84 /* videoView.swift in Sources */,
 				33CDADE31C5C908C00D5E666 /* View.swift in Sources */,
 				33CDADE11C5C881900D5E666 /* DataProcess.swift in Sources */,
 				33CDADD31C5C85F000D5E666 /* ContentCollectionViewController.swift in Sources */,

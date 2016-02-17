@@ -1,14 +1,7 @@
-//
-//  CollectionViewController.swift
-//  test
-//
-//  Created by jiangjiang on 12/24/15.
-//  Copyright © 2015 jiangjiang. All rights reserved.
-//
-
 import UIKit
 
 private let reuseIdentifier = "Cell"
+
 
 
 class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, UINavigationControllerDelegate, UIViewControllerTransitioningDelegate {
@@ -32,6 +25,8 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         return Content.feedsData.count
     }
     
+    // Cell Model: creator_image, video_image, title, creator_name
+    
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! CollectionViewCell
@@ -49,10 +44,11 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
 
         let creator_thumb_url = encodeURL(host + "static/image/creator_thumbnail/" + feed.name)
         cell.creator_thumb.startDownload(creator_thumb_url)
-        
-        let video_thumb_url = encodeURL(host + "static/image/video_thumbnail/" + feed.id)
+
+        let video_thumb_url = encodeURL(host + "static/image/video_thumbnail/mobile/" + feed.id)
         cell.video_thumb.startDownload(video_thumb_url)
         
+        print(cell.frame.size.height)
         return cell
     }
     // cancel cell image download
@@ -61,25 +57,22 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         (cell as! CollectionViewCell).video_thumb.cancelDownload()
     }
 
-    
     // Mark: WaterfallLayoutDelegate Protocol
-    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> Double {
-        
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return Content.feedsData[indexPath.item].ratio
     }
     
     func collectionViewColumbNum(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout) -> Int {
-    
         return 1
     }
     
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         
-        let svc = self.storyboard?.instantiateViewControllerWithIdentifier("abc") as! ItemDetailViewController
+        let svc = ItemDetailViewController()
         let feed = Content.feedsData[indexPath.item]
-        let video_url = host + "static/video/" + feed.name + "/" + feed.id + "/" + feed.id
-        svc.video_url = video_url
+        svc.contentID = Int(feed.id)
+        svc.ratio = feed.ratio
         self.navigationController?.pushViewController(svc, animated: true)
     }
     
