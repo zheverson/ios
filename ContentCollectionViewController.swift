@@ -71,7 +71,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         let feed = Content.feedsData[indexPath.item]
         svc.contentID = Int(feed.id)
         svc.ratio = feed.ratio
-        self.navigationController?.pushViewController(svc, animated: true)
+        self.presentViewController(svc, animated: true, completion: nil)
     }
     
     // Segue Animation

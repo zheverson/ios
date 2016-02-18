@@ -1,5 +1,6 @@
 
 import UIKit
+import AVFoundation
 
 class ItemDetailViewController: UIViewController {
     
@@ -15,13 +16,26 @@ class ItemDetailViewController: UIViewController {
         let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.width/self.ratio+120)
         
         let videoURL = "http://54.223.65.44:8100/static/video/content/\(self.contentID)/mobile/\(self.contentID)"
+        
+
         let videoview = videoView(frame: frame, url: videoURL, itemsID: items, timeline: timeline)
         
         self.view.addSubview(videoview)
+        let button = UIButton(frame: CGRect(x: 5, y: 55, width: 50, height: 50))
+        button.addTarget(self, action: "dismissButton:", forControlEvents: .TouchDown)
+        button.backgroundColor = UIColor.redColor()
+        self.view.addSubview(button)
+
     }
 
+    
+    func dismissButton(button: UIButton) {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-
     }
+    
+
 }

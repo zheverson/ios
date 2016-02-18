@@ -4,8 +4,6 @@ import AVFoundation
 
 class videoView: UIView {
     
-    var av: AVPlayer?
-    
     var videoSlider: UISlider?
     
     var itemView: UIScrollView!
@@ -33,11 +31,11 @@ class videoView: UIView {
         self.timeline = timeline
         let tapGesture = UITapGestureRecognizer(target: self, action: "videoViewTapped")
         self.addGestureRecognizer(tapGesture)
-        
+
         AVAssetConfig(url!)
-        print(2)
+        
         addItemView()
-        print(3)
+        
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -50,39 +48,44 @@ class videoView: UIView {
         let asset = AVURLAsset(URL: url)
         let duration = asset.duration
         let playerItem = AVPlayerItem(asset: asset)
-        av = AVPlayer(playerItem: playerItem)
+        let av = AVPlayer(playerItem: playerItem)
         
-        av?.addPeriodicTimeObserverForInterval(CMTimeMake(1, (av?.currentTime().timescale)!), queue: nil) {
-            time in
+        av.addPeriodicTimeObserverForInterval(CMTimeMake(1, (av.currentTime().timescale)), queue: nil) {
+            [weak self] time in
             
-            let second = CGFloat(CMTimeGetSeconds(time))
-            //sync slider value
-            self.videoSlider!.value = Float(second)
-            
-            print(second)
-            
-            self.itemView.setContentOffset(CGPoint(x: self.itemViewOffset(second), y: 0), animated: true)
-            
-            for (index, time) in self.timeline.enumerate() {
-                if (second - time) < 1 && (second - time > 0) {
-                    if index%2 == 0 {
-                        UIView.animateWithDuration(3) {
-                            for item in self.itemsImage[index/2] {
-                                item.transform = CGAffineTransformMakeScale(1.5, 1.5)
+            if self != nil {
+                let second = CGFloat(CMTimeGetSeconds(time))
+                //sync slider value
+                self!.videoSlider!.value = Float(second)
+                
+                print(second)
+                
+                self!.itemView.setContentOffset(CGPoint(x: self!.itemViewOffset(second), y: 0), animated: true)
+                
+                for (index, time) in self!.timeline.enumerate() {
+                    if (second - time) < 1 && (second - time > 0) {
+                        if index%2 == 0 {
+                            UIView.animateWithDuration(3) {
+                                for item in self!.itemsImage[index/2] {
+                                    item.transform = CGAffineTransformMakeScale(1.5, 1.5)
+                                }
+                            }
+                        } else {
+                            UIView.animateWithDuration(3) {
+                                for item in self!.itemsImage[(index-1)/2] {
+                                    item.transform = CGAffineTransformMakeScale(1, 1)
+                                }
                             }
                         }
-                    } else {
-                        UIView.animateWithDuration(3) {
-                            for item in self.itemsImage[(index-1)/2] {
-                                item.transform = CGAffineTransformMakeScale(1, 1)
-                            }
-                        }
+                        break
                     }
-                    break
                 }
             }
+            
+            
         }
-        addAVLayer()
+        
+        addAVLayer(av)
         addSliderToVideoView(Float(CMTimeGetSeconds(duration)))
     }
     
@@ -100,13 +103,15 @@ class videoView: UIView {
     }
     
     //add avlayer
-    func addAVLayer() {
+    func addAVLayer(av:AVPlayer) {
         let avlayer = AVPlayerLayer(player: av)
         avlayer.frame = CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height - itemViewHeight - itemVideoInterSpace)
         self.layer.addSublayer(avlayer)
     }
     
     func videoViewTapped() {
+        let av = (self.layer.sublayers![0] as! AVPlayerLayer).player
+        
         if av?.rate == 0 {
             av?.play()
             UIView.animateWithDuration(0.5) {
@@ -121,6 +126,7 @@ class videoView: UIView {
     }
     
     func sliderTapped(slider: UISlider) {
+        let av = (self.layer.sublayers![0] as! AVPlayerLayer).player
         let cmtime = CMTimeMakeWithSeconds(Double(slider.value), (av?.currentTime().timescale)!)
         av?.seekToTime(cmtime)
     }
@@ -198,4 +204,9 @@ class videoView: UIView {
         width += self.sameTimeItemSpace * CGFloat((self.itemsID[index].count - 1))
         return width
     }
+    
+    deinit {
+        print(989)
+    }
+    
 }
