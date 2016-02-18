@@ -54,8 +54,6 @@ class WaterfallLayout: UICollectionViewFlowLayout {
             
             self.columnPosition = Array(count: self.columnNumber, repeatedValue: self.columnPosition.maxElement()! + self.footerReferenceSize.height + self.sectionInset.bottom)
         }
-        
-        
     }
     
     override func collectionViewContentSize() -> CGSize {
@@ -90,5 +88,4 @@ class WaterfallLayout: UICollectionViewFlowLayout {
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat
     
     func collectionViewColumbNum(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout) -> Int
-
 }

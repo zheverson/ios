@@ -150,7 +150,7 @@ class videoView: UIView {
                 }
                 
                 view.frame = CGRect(x: xAxis, y: 10, width:itemWidth , height: itemImageHeight)
-                view.image = UIImage(data: NSData(contentsOfURL: nsurl!)!)
+                view.startDownload(nsurl!)
                 xAxis += (self.itemInterSpace + itemWidth)
                 itemView.addSubview(view)
             }

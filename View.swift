@@ -1,7 +1,5 @@
 import UIKit
 
-
-
 extension UIView {
     func cornerize(ratio: CGFloat?) {
         self.layer.masksToBounds = true

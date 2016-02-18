@@ -2,8 +2,6 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-
-
 class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, UINavigationControllerDelegate, UIViewControllerTransitioningDelegate {
     
     var Content = Feeds()
@@ -36,7 +34,6 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
             cell.video_thumb.cornerize(cell.frame.width/30)
         }
         
-        
         let feed = Content.feedsData[indexPath.item]
         
         cell.name.text = feed.name
@@ -51,6 +48,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         print(cell.frame.size.height)
         return cell
     }
+    
     // cancel cell image download
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
         (cell as! CollectionViewCell).creator_thumb.cancelDownload()
@@ -85,5 +83,4 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
             return nil
         }
     }
-    
 }

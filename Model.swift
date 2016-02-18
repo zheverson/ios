@@ -1,10 +1,3 @@
-//
-//  Model.swift
-//  ibuydeal
-//
-//  Created by jiangjiang on 1/30/16.
-//  Copyright © 2016 jiangjiang. All rights reserved.
-//
 
 import UIKit
 

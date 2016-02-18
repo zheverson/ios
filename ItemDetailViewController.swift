@@ -19,14 +19,9 @@ class ItemDetailViewController: UIViewController {
         
         self.view.addSubview(videoview)
     }
- 
-
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
 
     }
-    
-
-
 }
