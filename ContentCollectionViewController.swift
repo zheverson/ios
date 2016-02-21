@@ -2,14 +2,15 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, UINavigationControllerDelegate, UIViewControllerTransitioningDelegate {
+class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate {
     
     var Content = Feeds()
     var host = "http://54.223.65.44:8100/"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.delegate = self
+        print(self.view.frame.height)
+
         Content.getData(host + "user")
     }
     
@@ -35,7 +36,6 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         }
         
         let feed = Content.feedsData[indexPath.item]
-        
         cell.name.text = feed.name
         cell.title.text = feed.title
 
@@ -45,7 +45,6 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         let video_thumb_url = encodeURL(host + "static/image/video_thumbnail/mobile/" + feed.id)
         cell.video_thumb.startDownload(video_thumb_url)
         
-        print(cell.frame.size.height)
         return cell
     }
     
@@ -57,30 +56,26 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
 
     // Mark: WaterfallLayoutDelegate Protocol
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return Content.feedsData[indexPath.item].ratio
+        let width:CGFloat = 375/2
+        let ratio = width/(95+(width/Content.feedsData[indexPath.item].ratio))
+
+        return ratio
     }
     
     func collectionViewColumbNum(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout) -> Int {
-        return 1
+        return 2
     }
     
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        let svc = ItemDetailViewController()
         let feed = Content.feedsData[indexPath.item]
-        svc.contentID = Int(feed.id)
-        svc.ratio = feed.ratio
+        let image = (collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell).video_thumb.image
+        let svc = ItemDetailViewController(ratio: feed.ratio, contentID: Int(feed.id)!, thumb: image!)
+
         self.presentViewController(svc, animated: true, completion: nil)
     }
     
     // Segue Animation
-    func navigationController(navigationController: UINavigationController, animationControllerForOperation operation: UINavigationControllerOperation, fromViewController fromVC: UIViewController, toViewController toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        if operation == .Push {
-            let transition = Animator()
-            return transition
-        } else {
-            return nil
-        }
-    }
+
+    
 }
