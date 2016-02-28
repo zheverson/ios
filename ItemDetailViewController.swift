@@ -4,11 +4,10 @@
 import UIKit
 import AVFoundation
 
-class ItemDetailViewController: UIViewController, UIViewControllerTransitioningDelegate {
+class ItemDetailViewController: AnimationViewController, AnimationViewControllerDelegate {
     
     // init properties
     var contentID:Int
-    var ratio: CGFloat
     var thumb: UIImage
     
     var av:AVPlayer!
@@ -29,42 +28,44 @@ class ItemDetailViewController: UIViewController, UIViewControllerTransitioningD
     var itemsID: [[[Double]]]!
     var timeline: [CGFloat]!
     
-    init(ratio: CGFloat, contentID: Int, thumb:UIImage) {
-        self.ratio = ratio
+    
+    // MARK: init
+    init(ratio: CGFloat, contentID: Int, thumb:UIImage, cellFrame: CGRect) {
         self.contentID = contentID
         self.thumb = thumb
-        super.init(nibName: nil, bundle: nil)
+        super.init(toFrame: cellFrame)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: viewdidload
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.transitioningDelegate = self
         
         // instantiate avplayer
         let duration = addAVPlayer()
         
         // add videoView
-        let frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.width/self.ratio)
+        let ratio = self.toFrame.size.height / self.toFrame.size.width
+ 
+        let frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.width * ratio)
         videoView = VideoView(frame: frame, av: av, duration: duration, thumb: self.thumb)
         self.view.addSubview(videoView)
-        
-        // add view controller dismiss button
-        let button = UIButton(frame: CGRect(x: 5, y: 55, width: 50, height: 50))
-        button.addTarget(self, action: "dismissButton:", forControlEvents: .TouchDown)
-        button.backgroundColor = UIColor.redColor()
-        self.view.addSubview(button)
         
         // get items data
         getItemsData()
         
         // add item view
         addItemsView()
-    }
+        
+        // transition animation
+        self.animationDelegate = self
 
+    }
+    
+    // MARK: AVPlayer
     func addAVPlayer() -> Float {
         let URLString = "http://54.223.65.44:8100/static/video/content/\(self.contentID)/mobile/\(self.contentID)"
         let nsurl = NSURL(string: URLString)
@@ -110,7 +111,7 @@ class ItemDetailViewController: UIViewController, UIViewControllerTransitioningD
         }
     }
     
-    // Mark:get Items Data
+    // MARK:get Items Data
     func getItemsData() {
         let videoModelURL = NSURL(string: "http://54.223.65.44:8100/content/\(self.contentID)")
         let item_times = json(videoModelURL!, type: [String:AnyObject]())
@@ -118,7 +119,7 @@ class ItemDetailViewController: UIViewController, UIViewControllerTransitioningD
         timeline = item_times["timeline"] as! [CGFloat]
     }
 
-    // Add ItemsView()
+    // MARK: Add ItemsView()
     func addItemsView() {
         let width = self.view.frame.width
         let Height = self.videoView.frame.height
@@ -149,7 +150,7 @@ class ItemDetailViewController: UIViewController, UIViewControllerTransitioningD
         self.view.addSubview(itemsView)
     }
     
-    // map video time to itemsview offset
+    // MARK: map video time to itemsview offset
     func itemViewOffset(second:CGFloat) -> CGFloat {
         let item1Width = itemsImageHeight * CGFloat(self.itemsID[0][0][1])
         var itemOffset = item1Width + itemsInterSpace/2 + self.view.frame.width/2
@@ -187,12 +188,20 @@ class ItemDetailViewController: UIViewController, UIViewControllerTransitioningD
         return width
     }
     
-    func dismissButton(button: UIButton) {
-        self.dismissViewControllerAnimated(true, completion: nil)
+    // MARK: transition animation
+
+    func viewToBeDismissed() -> UIView {
+        return self.videoView
     }
     
-    func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        let animator = Animator()
-        return animator
+    func animateDuration() -> NSTimeInterval {
+        return 3
     }
+
+    
+    deinit{
+        print(3)
+    }
+    
+
 }

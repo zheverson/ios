@@ -2,21 +2,18 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate {
+class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, viewToBeAnimated {
     
     var Content = Feeds()
     var host = "http://54.223.65.44:8100/"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(self.view.frame.height)
-
         Content.getData(host + "user")
     }
     
     // Mark: UICollectionView DataSource Protocol
     override func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        
         return 1
     }
     
@@ -69,10 +66,21 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let feed = Content.feedsData[indexPath.item]
-        let image = (collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell).video_thumb.image
-        let svc = ItemDetailViewController(ratio: feed.ratio, contentID: Int(feed.id)!, thumb: image!)
+        let cellVideoView = (collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell).video_thumb
+        let image = cellVideoView.image
+        let cellFrame = cellVideoView.convertRect(cellVideoView.bounds, toView: nil)
+        let svc = ItemDetailViewController(ratio: feed.ratio, contentID: Int(feed.id)!, thumb: image!, cellFrame: cellFrame)
 
         self.presentViewController(svc, animated: true, completion: nil)
+    }
+    
+    func viewToBeAnimated() -> UIView {
+        let path = collectionView?.indexPathsForSelectedItems()
+        let cell = (self.collectionView?.cellForItemAtIndexPath(path![0]))! as! CollectionViewCell
+        let image = cell.video_thumb.image
+        let v = UIImageView(image: image)
+        v.frame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)
+        return v
     }
     
     // Segue Animation

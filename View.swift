@@ -8,7 +8,6 @@ extension UIView {
         } else {
             self.layer.cornerRadius = self.frame.width/2
         }
-        
     }
 }
 

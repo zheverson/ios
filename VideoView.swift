@@ -7,7 +7,7 @@ class VideoView: UIView {
 
     var av: AVPlayer
     var videoSlider: UISlider?
-    var thumbView: UIImageView!
+    var thumbView: UIImageView?
     
     init(frame: CGRect, av: AVPlayer, duration:Float, thumb:UIImage) {
         self.av = av
@@ -19,13 +19,13 @@ class VideoView: UIView {
         
         // Add Video Layer
         let layer = AVPlayerLayer(player: av)
-        layer.frame = self.frame
+        layer.frame = frame
         self.layer.addSublayer(layer)
         
         // Add thumbView
         thumbView = UIImageView(frame: frame)
-        thumbView.image = thumb
-        self.addSubview(thumbView)
+        thumbView!.image = thumb
+        self.addSubview(thumbView!)
         
         // Add Slider
         addSliderToVideoView(duration)
@@ -70,5 +70,9 @@ class VideoView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    deinit{
+        print(4)
     }
 }
