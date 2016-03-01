@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3301EFF41C85849300D8130D /* creatorViewPara.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301EFF31C85849300D8130D /* creatorViewPara.swift */; };
 		3317CE5D1C82A0BC00330B76 /* AnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3317CE5C1C82A0BC00330B76 /* AnimationViewController.swift */; };
 		3317CE5F1C82A18400330B76 /* transitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3317CE5E1C82A18400330B76 /* transitionAnimator.swift */; };
+		338C15991C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338C15981C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift */; };
+		338C159B1C82F1AD00543B87 /* ItemsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338C159A1C82F1AD00543B87 /* ItemsView.swift */; };
 		339E2EBD1C7ACEED0039C2FC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 339E2EBC1C7ACEED0039C2FC /* Launch Screen.storyboard */; };
 		339E715F1C78628300188D0B /* VideoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339E715E1C78628300188D0B /* VideoView.swift */; };
 		33B327431C5E204900E4B470 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33B327421C5E204900E4B470 /* ImageView.swift */; };
@@ -24,8 +27,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3301EFF31C85849300D8130D /* creatorViewPara.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = creatorViewPara.swift; sourceTree = SOURCE_ROOT; };
 		3317CE5C1C82A0BC00330B76 /* AnimationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationViewController.swift; sourceTree = SOURCE_ROOT; };
 		3317CE5E1C82A18400330B76 /* transitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = transitionAnimator.swift; sourceTree = SOURCE_ROOT; };
+		338C15981C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPanDirectionGestureRecognizer.swift; sourceTree = SOURCE_ROOT; };
+		338C159A1C82F1AD00543B87 /* ItemsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemsView.swift; sourceTree = SOURCE_ROOT; };
 		339E2EBC1C7ACEED0039C2FC /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../Launch Screen.storyboard"; sourceTree = "<group>"; };
 		339E715E1C78628300188D0B /* VideoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoView.swift; sourceTree = SOURCE_ROOT; };
 		33B327421C5E204900E4B470 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = SOURCE_ROOT; };
@@ -76,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				339E715E1C78628300188D0B /* VideoView.swift */,
+				338C15981C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -136,6 +143,8 @@
 			isa = PBXGroup;
 			children = (
 				33CDADDC1C5C86A900D5E666 /* ItemDetailViewController.swift */,
+				3301EFF31C85849300D8130D /* creatorViewPara.swift */,
+				338C159A1C82F1AD00543B87 /* ItemsView.swift */,
 			);
 			name = VideoItem;
 			path = ../../UIViewTest/UIViewTest;
@@ -233,12 +242,15 @@
 			files = (
 				33B327431C5E204900E4B470 /* ImageView.swift in Sources */,
 				33CDADDF1C5C879200D5E666 /* Model.swift in Sources */,
+				3301EFF41C85849300D8130D /* creatorViewPara.swift in Sources */,
 				33CDADD91C5C866400D5E666 /* CollectionViewCell.swift in Sources */,
 				3317CE5F1C82A18400330B76 /* transitionAnimator.swift in Sources */,
 				33CDADDD1C5C86A900D5E666 /* ItemDetailViewController.swift in Sources */,
 				33CDADD51C5C861100D5E666 /* WaterFallLayout.swift in Sources */,
 				33CDADE31C5C908C00D5E666 /* View.swift in Sources */,
+				338C159B1C82F1AD00543B87 /* ItemsView.swift in Sources */,
 				33CDADE11C5C881900D5E666 /* DataProcess.swift in Sources */,
+				338C15991C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift in Sources */,
 				33CDADD31C5C85F000D5E666 /* ContentCollectionViewController.swift in Sources */,
 				3317CE5D1C82A0BC00330B76 /* AnimationViewController.swift in Sources */,
 				339E715F1C78628300188D0B /* VideoView.swift in Sources */,

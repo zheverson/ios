@@ -124,6 +124,8 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
         // Origin
         v.frame.origin = viewOriginTransform((smallViewFrame?.origin)!, end: toFrame.origin, percent: percent)
         
+        print(smallViewFrame,toFrame)
+        
         // toView transform
         bigView.transform = CGAffineTransformScale(bigViewTransform!,percentOfScale,percentOfScale)
         

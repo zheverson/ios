@@ -19,11 +19,11 @@ class VideoView: UIView {
         
         // Add Video Layer
         let layer = AVPlayerLayer(player: av)
-        layer.frame = frame
+        layer.frame = CGRect(origin: CGPointZero, size: frame.size)
         self.layer.addSublayer(layer)
         
         // Add thumbView
-        thumbView = UIImageView(frame: frame)
+        thumbView = UIImageView(frame: layer.frame)
         thumbView!.image = thumb
         self.addSubview(thumbView!)
         

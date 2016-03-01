@@ -23,7 +23,7 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
     override func viewDidLoad() {
         super.viewDidLoad()
         self.transitioningDelegate = self
-        let pan = UIPanGestureRecognizer(target: self, action: "aaa:")
+        let pan = UIPanDirectionGestureRecognizer(direction: .UpToDown,target: self, action: "aaa:")
         self.view.addGestureRecognizer(pan)
     }
     

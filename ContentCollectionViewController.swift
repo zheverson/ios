@@ -5,7 +5,6 @@ private let reuseIdentifier = "Cell"
 class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, viewToBeAnimated {
     
     var Content = Feeds()
-    var host = "http://54.223.65.44:8100/"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,11 +65,13 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let feed = Content.feedsData[indexPath.item]
-        let cellVideoView = (collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell).video_thumb
-        let image = cellVideoView.image
-        let cellFrame = cellVideoView.convertRect(cellVideoView.bounds, toView: nil)
-        let svc = ItemDetailViewController(ratio: feed.ratio, contentID: Int(feed.id)!, thumb: image!, cellFrame: cellFrame)
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell
+        let image = cell.video_thumb.image
 
+        let cellFrame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)
+        let svc = ItemDetailViewController(contentID: Int(feed.id)!, thumb: image!, cellFrame: cellFrame)
+        svc.creatorName = feed.name
+        svc.creatorThumb = cell.creator_thumb.image
         self.presentViewController(svc, animated: true, completion: nil)
     }
     
@@ -82,8 +83,4 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         v.frame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)
         return v
     }
-    
-    // Segue Animation
-
-    
 }

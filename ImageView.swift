@@ -34,3 +34,15 @@ extension UIImageView {
         objc_setAssociatedObject(self, &imageTaskKey, task, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
     }
 }
+
+extension UILabel {
+    var setText:String {
+        get {
+            return self.text!
+        }
+        set {
+            self.text = newValue
+            self.sizeToFit()
+        }
+    }
+}

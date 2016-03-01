@@ -9,28 +9,20 @@ class ItemDetailViewController: AnimationViewController, AnimationViewController
     // init properties
     var contentID:Int
     var thumb: UIImage
+
+    var av:AVPlayer?
+    var videoView: VideoView?
+    var itemsView: ItemsDisplayView?
+    var itemsInfoView: ItemsInfoView?
     
-    var av:AVPlayer!
-    var videoView: VideoView!
-    var itemsView: UIScrollView!
-    
-    var spaceVideoItem:CGFloat = 40
-    
-    // itemView frame parameter
-    var itemsViewHeight:CGFloat = 100
-    let itemsImageHeight:CGFloat = 60
-    let itemsInterSpace:CGFloat = 40
-    let sameTimeItemSpace: CGFloat = 10
-    
-    var itemsImageView = [[UIImageView]]()
-    
-    // data model
-    var itemsID: [[[Double]]]!
+    var creatorName:String?
+    var creatorThumb:UIImage?
+    let creatorViewData = creatorViewPara()
+
     var timeline: [CGFloat]!
     
-    
     // MARK: init
-    init(ratio: CGFloat, contentID: Int, thumb:UIImage, cellFrame: CGRect) {
+    init(contentID: Int, thumb:UIImage, cellFrame: CGRect) {
         self.contentID = contentID
         self.thumb = thumb
         super.init(toFrame: cellFrame)
@@ -43,26 +35,46 @@ class ItemDetailViewController: AnimationViewController, AnimationViewController
     // MARK: viewdidload
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        self.view.backgroundColor = UIColor.whiteColor()
         // instantiate avplayer
         let duration = addAVPlayer()
         
+        // add creatorView
+        addCreatorView()
+        
         // add videoView
         let ratio = self.toFrame.size.height / self.toFrame.size.width
- 
-        let frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: self.view.frame.width * ratio)
-        videoView = VideoView(frame: frame, av: av, duration: duration, thumb: self.thumb)
-        self.view.addSubview(videoView)
+        let videoY = creatorViewData.position.y + creatorViewData.width + 10
+        print(videoY)
+        let frame = CGRect(x: 0, y: videoY, width: self.view.frame.width, height: self.view.frame.width * ratio)
+        videoView = VideoView(frame: frame, av: av!, duration: duration, thumb: self.thumb)
+        self.view.addSubview(videoView!)
         
-        // get items data
+        // add itemsDisplayView
         getItemsData()
-        
-        // add item view
-        addItemsView()
         
         // transition animation
         self.animationDelegate = self
-
+        
+        // add item info view
+        let y = self.itemsView?.nextViewOrigin().y
+        itemsInfoView = ItemsInfoView(frame: CGRect(x: 0, y: y! + 40, width: self.view.frame.width, height: 100))
+        self.view.addSubview(itemsInfoView!)
+        
+    }
+    
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
+    func addCreatorView() {
+        let thumbView = UIImageView(image: creatorThumb!)
+        thumbView.frame = CGRect(origin: creatorViewData.position, size: CGSize(width: creatorViewData.width, height: creatorViewData.width))
+        thumbView.cornerize(nil)
+        
+        let nameLabel = UILabel(frame: CGRect(x: creatorViewData.thumbNameSpace + thumbView.nextViewOrigin().x, y: creatorViewData.position.y, width: 10, height: thumbView.frame.height))
+        nameLabel.setText = creatorName!
+        self.view.addSubViews([thumbView, nameLabel])
     }
     
     // MARK: AVPlayer
@@ -78,28 +90,41 @@ class ItemDetailViewController: AnimationViewController, AnimationViewController
     }
     
     func AVSync() {
-        av.addPeriodicTimeObserverForInterval(CMTimeMake(1, (av.currentTime().timescale)), queue: nil) {
+        av!.addPeriodicTimeObserverForInterval(CMTimeMake(1, (av!.currentTime().timescale)), queue: nil) {
             [weak self] time in
             if self != nil {
                 let second = CGFloat(CMTimeGetSeconds(time))
                 //sync slider value
-                self!.videoView.videoSlider!.value = Float(second)
+                self!.videoView!.videoSlider!.value = Float(second)
                 
                 //sync itemsView speed
-                self!.itemsView.setContentOffset(CGPoint(x: self!.itemViewOffset(second), y: 0), animated: true)
+                self!.itemsView!.setContentOffset(CGPoint(x: self!.itemsView!.itemViewOffset(second, timeline: self!.timeline), y: 0), animated: true)
                 
                 //transform image size
                 for (index, time) in self!.timeline.enumerate() {
                     if (second - time) < 1 && (second - time > 0) {
                         if index%2 == 0 {
+                            let sub = "/name/price"
+        
+                            let okk = self?.itemsView!.itemsID[index/2][0][0]
+                            print(host + "item/\(okk!)" + sub)
+                            let data = try? String(contentsOfURL: NSURL(string: host + "item/\(Int(okk!))" + sub)!)
+                            let dd = data!.componentsSeparatedByString("&")
+                       
+                            let price = dd[1]
+                            let name = dd[0]
+                            
+                            self?.itemsInfoView?.name?.setText = name
+                            self?.itemsInfoView?.price?.setText = price
+               
                             UIView.animateWithDuration(3) {
-                                for item in self!.itemsImageView[index/2] {
+                                for item in self!.itemsView!.itemsImageView[index/2] {
                                     item.transform = CGAffineTransformMakeScale(1.5, 1.5)
                                 }
                             }
                         } else {
                             UIView.animateWithDuration(3) {
-                                for item in self!.itemsImageView[(index-1)/2] {
+                                for item in self!.itemsView!.itemsImageView[(index-1)/2] {
                                     item.transform = CGAffineTransformMakeScale(1, 1)
                                 }
                             }
@@ -115,93 +140,24 @@ class ItemDetailViewController: AnimationViewController, AnimationViewController
     func getItemsData() {
         let videoModelURL = NSURL(string: "http://54.223.65.44:8100/content/\(self.contentID)")
         let item_times = json(videoModelURL!, type: [String:AnyObject]())
-        itemsID = item_times["items"] as! [[[Double]]]
+        let itemsID = item_times["items"] as! [[[Double]]]
         timeline = item_times["timeline"] as! [CGFloat]
-    }
-
-    // MARK: Add ItemsView()
-    func addItemsView() {
-        let width = self.view.frame.width
-        let Height = self.videoView.frame.height
-        itemsView = UIScrollView(frame: CGRect(x: 0, y: Height + spaceVideoItem, width: width, height: 100))
-        var xAxis:CGFloat = width
+        let itemsDisplayY = videoView?.nextViewOrigin().y
+        itemsView = ItemsDisplayView(frame: CGRect(x: 0, y: itemsDisplayY! + 20, width: ScreenSize.width, height: 100), itemsID:itemsID)
         
-        for (itemindex, items) in itemsID.enumerate() {
-            for (index, item) in items.enumerate() {
-                
-                let itemWidth = itemsImageHeight * CGFloat(item[1])
-                let nsurl = NSURL(string: "http://54.223.65.44:8100/static/image/item_thumbnail/" + String(Int(item[0])))
-                
-                let view = UIImageView()
-                if index == 0 {
-                    itemsImageView.append([view])
-                } else {
-                    xAxis = xAxis - (self.itemsInterSpace - self.sameTimeItemSpace)
-                    itemsImageView[itemindex].append(view)
-                }
-                
-                view.frame = CGRect(x: xAxis, y: 10, width:itemWidth , height: itemsImageHeight)
-                view.startDownload(nsurl!)
-                xAxis += (self.itemsInterSpace + itemWidth)
-                self.itemsView.addSubview(view)
-            }
-        }
-        itemsView.contentSize = CGSize(width: xAxis, height: itemsViewHeight)
-        self.view.addSubview(itemsView)
-    }
-    
-    // MARK: map video time to itemsview offset
-    func itemViewOffset(second:CGFloat) -> CGFloat {
-        let item1Width = itemsImageHeight * CGFloat(self.itemsID[0][0][1])
-        var itemOffset = item1Width + itemsInterSpace/2 + self.view.frame.width/2
-        if second < self.timeline[2] {
-            return itemOffset * second/(self.timeline[2])
-            
-        } else if second > self.timeline[self.timeline.count - 1] {
-            return 1.5
-            
-        } else {
-            for index in 2.stride(through: self.timeline.count-2, by: 2) {
-                if second >= self.timeline[index] && second < self.timeline[index+2] {
-                    
-                    let itemWidth = itemGroupWidth(index/2)
-                    
-                    for i in 4.stride(through: index, by: 2) {
-                        itemOffset = itemOffset + itemGroupWidth((i-2)/2) + itemsInterSpace
-                    }
-                    let secondPercent = (second-self.timeline[index])/(self.timeline[index+2]-self.timeline[index])
-                  
-                    return itemOffset + (itemWidth + itemsInterSpace) * secondPercent
-                }
-            }
-        }
-        print("not possible")
-        return 1
-    }
-    
-    func itemGroupWidth(index: Int) -> CGFloat {
-        var width:CGFloat = 0
-        for item in self.itemsID[index]{
-            width += itemsImageHeight * CGFloat(item[1])
-        }
-        width += self.sameTimeItemSpace * CGFloat((self.itemsID[index].count - 1))
-        return width
+        self.view.addSubview(itemsView!)
     }
     
     // MARK: transition animation
-
     func viewToBeDismissed() -> UIView {
-        return self.videoView
+        return self.videoView!
     }
     
     func animateDuration() -> NSTimeInterval {
         return 3
     }
 
-    
     deinit{
         print(3)
     }
-    
-
 }
