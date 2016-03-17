@@ -2,7 +2,8 @@ import UIKit
 
 private let reuseIdentifier = "Cell"
 
-class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, viewToBeAnimated {
+
+class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, presentingVCDeleage{
     
     var Content = Feeds()
     
@@ -28,7 +29,6 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         
         if cell.creator_thumb.image == nil {
             cell.creator_thumb.cornerize(nil)
-            cell.video_thumb.cornerize(cell.frame.width/30)
         }
         
         let feed = Content.feedsData[indexPath.item]
@@ -52,7 +52,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
 
     // Mark: WaterfallLayoutDelegate Protocol
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let width:CGFloat = 375/2
+        let width:CGFloat = (375-10)/2
         let ratio = width/(95+(width/Content.feedsData[indexPath.item].ratio))
 
         return ratio
@@ -64,15 +64,28 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+
         let feed = Content.feedsData[indexPath.item]
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell
-        let image = cell.video_thumb.image
-
+        guard let creator_image = cell.creator_thumb.image, image = cell.video_thumb.image  else {
+            self.networkAlertShow()
+            return
+        }
+    
         let cellFrame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)
-        let svc = ItemDetailViewController(contentID: Int(feed.id)!, thumb: image!, cellFrame: cellFrame)
+        let svc = self.storyboard?.instantiateViewControllerWithIdentifier("contentDetail") as! ContentDetailViewController
+
+        svc.contentID = Int(feed.id)
+        svc.thumb = image
+        svc.toFrame = cellFrame
+        
         svc.creatorName = feed.name
-        svc.creatorThumb = cell.creator_thumb.image
-        self.presentViewController(svc, animated: true, completion: nil)
+        
+        svc.creatorThumb = creator_image
+        
+        self.presentViewController(svc, animated: true){
+
+        }
     }
     
     func viewToBeAnimated() -> UIView {

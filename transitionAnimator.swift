@@ -6,16 +6,19 @@ let ScreenSize = UIScreen.mainScreen().bounds.size
 
 class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning {
     // Init
-    var snapshot: UIView?
-    let toFrame:CGRect
-    let duration: NSTimeInterval
+    private var snapshot: UIView?
+    private let toFrame:CGRect
+    private let duration: NSTimeInterval
     
     // Data
-    var context:UIViewControllerContextTransitioning?
-    var bigViewFrame:CGRect?
-    var bigViewTransform: CGAffineTransform?
-    var smallViewFrame:CGRect?
+    private var context:UIViewControllerContextTransitioning?
+    private var bigViewFrame:CGRect?
+    private var bigViewTransform: CGAffineTransform?
+    private var smallViewFrame:CGRect?
     
+    private var superView:UIView?
+    
+    var ifAutoLayout:Bool = false
     init(snapshot: UIView, toFrame:CGRect, duration: NSTimeInterval){
         self.snapshot = snapshot
         self.toFrame = toFrame
@@ -30,13 +33,16 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
         
         let toView = transitionContext.viewForKey(UITransitionContextToViewKey)
+        
         toView?.hidden = true
         
         let con = transitionContext.containerView()
         con?.addSubview(toView!)
+
         con?.addSubview(snapshot!)
         
         let fromView = transitionContext.viewForKey(UITransitionContextFromViewKey)
+  
         smallViewFrame = snapshot?.frame
         bigViewFrame = fromView?.frame
         bigViewTransform = CGAffineTransformIdentity
@@ -49,7 +55,6 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
             }, completion:{
                 _ in
                 self.snapshot?.removeFromSuperview()
-                //fromView?.addSubview(self.snapshot!)
                 toView?.hidden = false
                 transitionContext.completeTransition(true)
                 
@@ -62,18 +67,36 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
         context = transitionContext
         context?.viewForKey(UITransitionContextFromViewKey)?.hidden = true
         let con = context?.containerView()
+
         let toView = context?.viewForKey(UITransitionContextToViewKey)
+     
         bigViewFrame = toView?.frame
-        smallViewFrame = snapshot?.frame
+ 
         bigViewTransform = toView?.transform
         con?.addSubview(toView!)
+        
+        superView = snapshot?.superview
+        let frame = snapshot!.convertRect(snapshot!.bounds, toView: nil)
+        
+        if snapshot!.translatesAutoresizingMaskIntoConstraints == false {
+            snapshot?.removeFromSuperview()
+            snapshot!.translatesAutoresizingMaskIntoConstraints = true
+            snapshot!.removeConstraints(snapshot!.constraints)
+            ifAutoLayout = true
+        }
+        
+        snapshot!.frame = frame
+        smallViewFrame = snapshot?.frame
         con?.addSubview(snapshot!)
+
     }
     
     func interactiveUpdate(percent:CGFloat) {
         
+  
         let toView = context?.viewForKey(UITransitionContextToViewKey)
         viewMapPercent(snapshot!, percent: percent, bigView: toView!)
+        
         toView?.alpha = percent
         context?.updateInteractiveTransition(percent)
     }
@@ -81,10 +104,12 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     func interactiveComplete(percent:CGFloat, threshold:CGFloat) {
         
         let fromView = context?.viewForKey(UITransitionContextFromViewKey)
+
         let toView = context?.viewForKey(UITransitionContextToViewKey)
+        let toVC = context?.viewControllerForKey(UITransitionContextToViewControllerKey) as! presentingVCDeleage
         
         if percent > threshold {
-            UIView.animateWithDuration(2, animations: {
+            UIView.animateWithDuration(0.6, animations: {
                 toView?.alpha = 1
                 self.viewMapPercent(self.snapshot!, percent: 1, bigView: toView!)
                 
@@ -94,45 +119,55 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
                     self.context?.completeTransition(true)
                     self.snapshot?.removeFromSuperview()
                     fromView?.hidden = false
+                    toVC.dismissAnimatonComplete()
             })
             
         } else {
-            UIView.animateWithDuration(2, animations: {
+            UIView.animateWithDuration(0.6, animations: {
                 toView?.alpha = 0
                 self.viewMapPercent(self.snapshot!, percent: 0, bigView: toView!)
                 
                 }, completion: {
                     _ in
-                    
                     self.context?.cancelInteractiveTransition()
                     self.context?.completeTransition(false)
-                    fromView?.addSubview(self.snapshot!)
+                    if self.ifAutoLayout == false {
+                        self.snapshot?.frame = (self.superView?.bounds)!
+                        self.superView?.addSubview(self.snapshot!)
+                    } else {
+                        self.snapshot?.translatesAutoresizingMaskIntoConstraints = false
+                        self.superView?.addSubview(self.snapshot!)
+                        self.snapshot?.fillInSuperView()
+                    }
                     fromView?.hidden = false
             })
         }
     }
     
     // MARK:View Frame Computation
-    func viewMapPercent(v:UIView, percent:CGFloat, bigView:UIView) {
+    private func viewMapPercent(v:UIView, percent:CGFloat, bigView:UIView) {
+
         
         // UIView transform
         // Scale
         let scale = (toFrame.width) / (smallViewFrame!.width)
+     
         let percentOfScale = (scale - 1) * percent + 1
         v.transform = CGAffineTransformMakeScale(percentOfScale, percentOfScale)
-        
+    
         // Origin
         v.frame.origin = viewOriginTransform((smallViewFrame?.origin)!, end: toFrame.origin, percent: percent)
-        
-        print(smallViewFrame,toFrame)
-        
+
+
         // toView transform
         bigView.transform = CGAffineTransformScale(bigViewTransform!,percentOfScale,percentOfScale)
         
         bigView.frame.origin = bigViewOrigin((bigViewFrame?.origin)!, fromchild: (smallViewFrame?.origin)!, scale: percentOfScale, toChild: v.frame.origin)
+
+        
     }
     
-    func viewOriginTransform(begin:CGPoint, end:CGPoint, percent:CGFloat) -> CGPoint {
+    private func viewOriginTransform(begin:CGPoint, end:CGPoint, percent:CGFloat) -> CGPoint {
         let difX = end.x - begin.x
         let difY = end.y - begin.y
         let x = begin.x + difX * percent
@@ -140,7 +175,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
         return CGPoint(x: x, y: y)
     }
     
-    func bigViewOrigin(fromParent:CGPoint, fromchild:CGPoint, scale:CGFloat, toChild:CGPoint) -> CGPoint {
+    private func bigViewOrigin(fromParent:CGPoint, fromchild:CGPoint, scale:CGFloat, toChild:CGPoint) -> CGPoint {
         let difX = fromchild.x - fromParent.x
         let difY = fromchild.y - fromParent.y
         let x = toChild.x - difX * scale
@@ -149,7 +184,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     }
     
     deinit{
-        print(0)
+        print("animator")
     }
 }
 
