@@ -51,7 +51,6 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     
     private var color:[String]? {
         didSet {
-            print("reload")
             self.colorCollection.reloadData()
         }
     }
@@ -62,8 +61,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
-    let itemNameFont = UIFont(name: "IowanOldStyle-Roman", size: 17)
-    let priceFont = UIFont(name: "IowanOldStyle-Roman", size: 17)
+    let itemNameFont = font1
+    let priceFont = font1
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,9 +99,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithURL(NSURL(string: "http://54.223.65.44:8100/item/\(itemID!)/name/price/color/brand")!) {
             data, response, error in
-            print("success")
             let ss = String(data: data!, encoding: NSUTF8StringEncoding)
-            let dd = ss!.componentsSeparatedByString("&")
+            let dd = ss!.componentsSeparatedByString("&#")
             let px = dd[1]
             let name = dd[0]
             let brand = dd[3]

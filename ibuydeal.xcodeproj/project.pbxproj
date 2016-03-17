@@ -13,6 +13,8 @@
 		336A4A571C8F3F870095AB2E /* ItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336A4A561C8F3F870095AB2E /* ItemDetailsViewController.swift */; };
 		336A4A591C8F3FC50095AB2E /* shadowArrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336A4A581C8F3FC50095AB2E /* shadowArrowView.swift */; };
 		336A4A5B1C8F3FCC0095AB2E /* colorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336A4A5A1C8F3FCC0095AB2E /* colorCell.swift */; };
+		33709A691C9A8DBE000E35CC /* itemsInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33709A681C9A8DBE000E35CC /* itemsInfoView.swift */; };
+		33709A6B1C9A9C9D000E35CC /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33709A6A1C9A9C9D000E35CC /* Font.swift */; };
 		338C15991C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338C15981C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift */; };
 		339E2EBD1C7ACEED0039C2FC /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 339E2EBC1C7ACEED0039C2FC /* Launch Screen.storyboard */; };
 		339E715F1C78628300188D0B /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339E715E1C78628300188D0B /* VideoViewController.swift */; };
@@ -37,6 +39,8 @@
 		336A4A561C8F3F870095AB2E /* ItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDetailsViewController.swift; sourceTree = "<group>"; };
 		336A4A581C8F3FC50095AB2E /* shadowArrowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shadowArrowView.swift; sourceTree = "<group>"; };
 		336A4A5A1C8F3FCC0095AB2E /* colorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = colorCell.swift; sourceTree = "<group>"; };
+		33709A681C9A8DBE000E35CC /* itemsInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = itemsInfoView.swift; sourceTree = SOURCE_ROOT; };
+		33709A6A1C9A9C9D000E35CC /* Font.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = SOURCE_ROOT; };
 		338C15981C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIPanDirectionGestureRecognizer.swift; sourceTree = SOURCE_ROOT; };
 		339E2EBC1C7ACEED0039C2FC /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../Launch Screen.storyboard"; sourceTree = "<group>"; };
 		339E715E1C78628300188D0B /* VideoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = SOURCE_ROOT; };
@@ -167,6 +171,7 @@
 			children = (
 				33CDADDC1C5C86A900D5E666 /* ContentDetailViewController.swift */,
 				331A3B511C950C0000DE5D1F /* ItemCollectionViewCell.swift */,
+				33709A681C9A8DBE000E35CC /* itemsInfoView.swift */,
 			);
 			name = ContentDetail;
 			path = ../../UIViewTest/UIViewTest;
@@ -186,6 +191,7 @@
 			children = (
 				33CDADE21C5C908C00D5E666 /* View.swift */,
 				33B327421C5E204900E4B470 /* ImageView.swift */,
+				33709A6A1C9A9C9D000E35CC /* Font.swift */,
 			);
 			name = "UIKit Extension";
 			path = ../../UIViewTest/UIViewTest;
@@ -271,6 +277,7 @@
 			files = (
 				33B327431C5E204900E4B470 /* ImageView.swift in Sources */,
 				33CDADDF1C5C879200D5E666 /* Model.swift in Sources */,
+				33709A6B1C9A9C9D000E35CC /* Font.swift in Sources */,
 				33F2A3361C91521800968E06 /* NetworkAlert.swift in Sources */,
 				331A3B521C950C0000DE5D1F /* ItemCollectionViewCell.swift in Sources */,
 				336A4A591C8F3FC50095AB2E /* shadowArrowView.swift in Sources */,
@@ -288,6 +295,7 @@
 				339E715F1C78628300188D0B /* VideoViewController.swift in Sources */,
 				336A4A571C8F3F870095AB2E /* ItemDetailsViewController.swift in Sources */,
 				33CDADD11C5C85AD00D5E666 /* AppDelegate.swift in Sources */,
+				33709A691C9A8DBE000E35CC /* itemsInfoView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,10 +22,6 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     
     @IBOutlet weak var itemsCollectionView: UICollectionView!
     
-    @IBOutlet weak var itemNameLabel: UILabel!
-    
-    @IBOutlet weak var itemPriceLabel: UILabel!
-    
     @IBOutlet weak var likeImage: UIImageView!
     
     @IBOutlet weak var cartImage: UIImageView!
@@ -48,7 +44,9 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     var userRate:Bool = false
     
     private var starSection:Int?
-
+    
+    @IBOutlet weak var itemDataView: itemsInfoView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -134,7 +132,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
                 [weak self] time in
                 guard self != nil else { return }
                 let second = CGFloat(CMTimeGetSeconds(time))
-     
+                print(second)
                 self!.itemsCollectionView!.setContentOffset(CGPoint(x: self!.itemViewOffset(second), y: 0), animated: true)
                 
                 let sectionIndex = self?.getSecondIndex(second)
@@ -144,8 +142,8 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
                 }
 
                 outif: if sectionIndex >= 0 {
-                    guard (self?.animateSection(sectionIndex!))! else { break outif }
-                    
+                    guard let itemFrames = self!.animateSection(sectionIndex!) else { break outif }
+                    self?.updateItemInfo(sectionIndex!, itemFrames: itemFrames)
                     if self?.starSection != nil {
                         self?.animateSection((self?.starSection)!)
                     }
@@ -161,26 +159,25 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         } // AV Observer block complete
     }
     
-    private func animateSection(sectionNumber:Int) -> Bool {
+    private func animateSection(sectionNumber:Int) -> [CGRect]? {
         let sectionItemCount = self.itemsID![sectionNumber].count
-        var cellIfNil = true
-        UIView.animateWithDuration(3) {
-            for itemIndex in 0..<sectionItemCount {
-
-                if let cell = self.itemsCollectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemIndex, inSection: sectionNumber)) {
-                    
+        var itemInfoFrame = [CGRect]()
+        
+        for itemIndex in 0..<sectionItemCount {
+            if let cell = self.itemsCollectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemIndex, inSection: sectionNumber)) {
+                itemInfoFrame.append(cell.convertRect(cell.bounds, toView: nil))
+                UIView.animateWithDuration(3){
                     if CGAffineTransformIsIdentity((cell.transform)) {
                         cell.transform = CGAffineTransformMakeScale(1.5, 1.5)
                     } else {
                         cell.transform = CGAffineTransformIdentity
                     }
-                    cellIfNil = true
-                } else {
-                    cellIfNil = false
                 }
+            } else {
+                return nil
             }
         }
-        return cellIfNil
+        return itemInfoFrame
     }
     
     func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
@@ -244,18 +241,21 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
 
     
     // MARK: individual item info view
-    private func updateItemInfo(index:Int) {
+    private func updateItemInfo(index:Int, itemFrames:[CGRect]) {
         let sub = "/name/price"
-        let okk = self.itemsID![index/2][0][0]
+        let items = self.itemsID![index]
+        var itemsInfoArray = [itemsInfo]()
         
-        let data = try? String(contentsOfURL: NSURL(string: host + "item/\(Int(okk))" + sub)!)
-        let dd = data!.componentsSeparatedByString("&")
+        for (index,item) in items.enumerate() {
+            let id = item[0]
+            let data = try? String(contentsOfURL: NSURL(string: host + "item/\(Int(id))" + sub)!)
+            let dd = data!.componentsSeparatedByString("&#")
+            let price = dd[1]
+            let name = dd[0]
+            itemsInfoArray.append(itemsInfo(name: name, price: Double(price)!, frame: itemFrames[index]))
+        }
         
-        let price = dd[1]
-        let name = dd[0]
-        
-        self.itemNameLabel.setText = name
-        self.itemPriceLabel.setText = price
+        itemDataView.updateItems(itemsInfoArray)
     }
     
     // MARK: dismiss transition animation

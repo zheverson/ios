@@ -33,7 +33,45 @@ extension UIView {
         self.heightAnchor.constraintEqualToAnchor(self.superview?.heightAnchor).active = true
         self.widthAnchor.constraintEqualToAnchor(self.superview?.widthAnchor).active = true
     }
+    
+    func allAnimate(fromFrame:CGRect, count:Int, duration:NSTimeInterval) {
+        let fromX = fromFrame.origin.x + fromFrame.width/2
+        let fromY = fromFrame.origin.y + fromFrame.height/2
+        
+        let x = (self.center.x - fromX) / CGFloat((count*2))
+        let y = (self.center.y - fromY) / CGFloat((count*2))
+        
+        self.center = CGPoint(x: fromX, y: fromY)
+        let scaleX = fromFrame.width / self.frame.width
+        let scaleY = fromFrame.height / self.frame.height
+        
+        self.transform = CGAffineTransformMakeScale(scaleX, scaleY)
+        
+        var time = 1
+        let factor:CGFloat = 1/(CGFloat(count)*2)
+        let sx = pow(1/scaleX, factor)
+        let sy = pow(1/scaleY, factor)
+        
+        func animate() {
+            UIView.animateWithDuration(duration/(Double(count)*2), delay: 0, options: .CurveLinear, animations: {
+                self.transform = CGAffineTransformRotate(self.transform, CGFloat(M_PI))
+                self.transform = CGAffineTransformScale(self.transform, sx, sy)
+                
+                self.center = CGPoint(x: self.center.x + x, y: self.center.y + y)
+                }, completion: {
+                    _ in
+                    print(time)
+                    time += 1
+                    if time < count*2 + 1 {
+                        
+                        animate()
+                    }
+            })
+        }
+        animate()
+    }
 }
+
 
 
 extension UICollectionViewFlowLayout {
