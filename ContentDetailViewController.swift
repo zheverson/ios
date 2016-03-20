@@ -1,13 +1,13 @@
  
-/* This view controller is presented from collection view, it's purpose is to play video, and let customer see product associated with video.
-*/
-import UIKit
-import AVFoundation
-import AVKit
+ /* This view controller is presented from collection view, it's purpose is to play video, and let customer see product associated with video.
+ */
+ import UIKit
+ import AVFoundation
+ import AVKit
  
-public var start:CFAbsoluteTime = 0
-
-class ContentDetailViewController:AnimationViewController, presentingVCDeleage, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, presentedVCDelegate {
+ public var start:CFAbsoluteTime = 0
+ 
+ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, presentedVCDelegate {
     
     // MARK: view property
     var creatorThumb:UIImage?
@@ -17,7 +17,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     var creatorName:String?
     
     @IBOutlet weak var creatorNameLabel: UILabel!
-
+    
     @IBOutlet weak var videoContainerView: UIView!
     
     @IBOutlet weak var itemsCollectionView: UICollectionView!
@@ -26,18 +26,18 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     
     @IBOutlet weak var cartImage: UIImageView!
     
+    @IBOutlet weak var itemDataView: itemsInfoView!
+    
     private var viewAnimate:UIView?
     
     // MARK: data property
-    var cellHeight:CGFloat = 50
-    var startOffset:CGFloat = 90
+    var cellHeight:CGFloat = 70
+    var startOffset:CGFloat = 100
     var interSectionSpace:CGFloat = 20
-
-    var contentID:Int!
+    
     var thumb: UIImage?
     
-    private var timeline: [CGFloat]?
-    private var itemsID: [[[Double]]]?
+    var videocontent:videoContent?
     
     private var AVObserver:AnyObject?
     private var player:AVPlayer?
@@ -45,51 +45,49 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     
     private var starSection:Int?
     
-    @IBOutlet weak var itemDataView: itemsInfoView!
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(videocontent?.id)
         fillCreatorView()
-        getItemsData()
+        videocontent?.getItems()
         itemsCollectionView.dataSource = self
         itemsCollectionView.delegate = self
         self.animationDelegate = self
         
         let ratio = (toFrame?.width)!/(toFrame?.height)!
+        print(toFrame?.size)
+        print(1/ratio)
         videoContainerView.heightAnchor.constraintEqualToAnchor(videoContainerView.widthAnchor, multiplier: 1/ratio).active = true
         
         itemsCollectionView.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "normalheader")
         itemsCollectionView.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionFooter, withReuseIdentifier: "normalfooter")
-    }
+        
+        likeImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/util/like")!)
+        cartImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/util/cart")!)
 
-    // MARK: item collection display view
-    private func getItemsData() {
-        let videoModelURL = NSURL(string: "http://54.223.65.44:8100/content/\(self.contentID)")
-        let item_times = json(videoModelURL!, type: [String:AnyObject]())
-        itemsID = item_times["items"] as? [[[Double]]]
-        timeline = item_times["timeline"] as? [CGFloat]
     }
     
+    // MARK: item collection display view
+    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-        return (itemsID?.count)!
+        return (videocontent?.items.count)!
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return itemsID![section].count
+        return (videocontent?.items[section].count)!
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("itemImage", forIndexPath: indexPath) as! ItemCollectionViewCell
-        let itemID = Int(itemsID![indexPath.section][indexPath.item][0])
-        let url = NSURL(string: host + "static/image/item/\(itemID)/\(itemID)")
+        let itemID = ((videocontent?.items[indexPath.section][indexPath.item])?.id)!
+        let url = NSURL(string: host + "static/image/item/\(itemID)/product")
         cell.itemImage.startDownload(url!)
         return cell
     }
     
     func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         
-     if kind == UICollectionElementKindSectionHeader {
+        if kind == UICollectionElementKindSectionHeader {
             let v = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: "normalheader", forIndexPath: indexPath)
             return v
         } else {
@@ -99,8 +97,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
-        
-        return CGSize(width: cellHeight * CGFloat(itemsID![indexPath.section][indexPath.item][1]), height: cellHeight)
+        return CGSize(width: cellHeight * (videocontent!.items[indexPath.section][indexPath.item]).itemImageRatio!, height: cellHeight)
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
@@ -110,7 +107,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
-        if section == (itemsID?.count)! - 1 {
+        if section == (videocontent?.items.count)! - 1 {
             return collectionView.bounds.size
         } else { return CGSize(width: interSectionSpace, height: collectionView.frame.height) }
     }
@@ -119,7 +116,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         if segue.identifier == "videoView" {
             let vc = segue.destinationViewController as! VideoViewController
-            player = AVPlayer(URL: NSURL(string: host + "static/video/content/\(self.contentID)/mobile/\(self.contentID)")!)
+            player = AVPlayer(URL: NSURL(string: host + "static/video/content/\((self.videocontent?.id)!)/mobile/\((self.videocontent?.id)!)")!)
             vc.player = player
             vc.thumbImage = thumb
             
@@ -136,14 +133,15 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
                 self!.itemsCollectionView!.setContentOffset(CGPoint(x: self!.itemViewOffset(second), y: 0), animated: true)
                 
                 let sectionIndex = self?.getSecondIndex(second)
-
+                
                 guard sectionIndex != self?.starSection else {
                     return
                 }
-
+                
                 outif: if sectionIndex >= 0 {
                     guard let itemFrames = self!.animateSection(sectionIndex!) else { break outif }
-                    self?.updateItemInfo(sectionIndex!, itemFrames: itemFrames)
+                    self?.itemDataView.updateItems((self?.videocontent?.items[sectionIndex!])!, fromFrame: itemFrames)
+                    
                     if self?.starSection != nil {
                         self?.animateSection((self?.starSection)!)
                     }
@@ -160,10 +158,10 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     }
     
     private func animateSection(sectionNumber:Int) -> [CGRect]? {
-        let sectionItemCount = self.itemsID![sectionNumber].count
+        let sectionItemCount = self.videocontent?.items[sectionNumber].count
         var itemInfoFrame = [CGRect]()
         
-        for itemIndex in 0..<sectionItemCount {
+        for itemIndex in 0..<sectionItemCount! {
             if let cell = self.itemsCollectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemIndex, inSection: sectionNumber)) {
                 itemInfoFrame.append(cell.convertRect(cell.bounds, toView: nil))
                 UIView.animateWithDuration(3){
@@ -192,8 +190,8 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         let sectionWidth = flowLayout.lengthForSectionAtIndex(0)
         let viewOffset0 = startOffset + sectionWidth - itemsCollectionView.frame.width
         
-        guard second > timeline![2] else {
-            return viewOffset0 * second/(timeline![2])
+        guard second > videocontent!.timeline![2] else {
+            return viewOffset0 * second/(videocontent!.timeline![2])
         }
         let index = getSecondIndex(second)
         
@@ -201,12 +199,12 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
     }
     
     private func getSecondIndex(second:CGFloat) -> Int {
-        guard second >= timeline![0] else {
+        guard second >= videocontent!.timeline![0] else {
             return -1
         }
-
-        for i in 0.stride(to: (timeline?.count)! - 2, by: 2) {
-            if case timeline![i]...timeline![i+2] = second {
+        
+        for i in 0.stride(to: (videocontent!.timeline?.count)! - 2, by: 2) {
+            if case videocontent!.timeline![i]...videocontent!.timeline![i+2] = second {
                 return i/2
             }
         }
@@ -228,7 +226,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         guard index > 0 else { return 0 }
         let flowLayout = itemsCollectionView.collectionViewLayout as! UICollectionViewFlowLayout
         let sectionWidth = flowLayout.lengthForSectionAtIndex(index)
-        return sectionWidth * (second - timeline![index*2]) / (timeline![index*2+2] - timeline![index*2])
+        return sectionWidth * (second - videocontent!.timeline![index*2]) / (videocontent!.timeline![index*2+2] - videocontent!.timeline![index*2])
     }
     
     // MARK: top most creator view
@@ -238,36 +236,24 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         creatorNameLabel.setText = creatorName!
     }
     
-
-    
-    // MARK: individual item info view
-    private func updateItemInfo(index:Int, itemFrames:[CGRect]) {
-        let sub = "/name/price"
-        let items = self.itemsID![index]
-        var itemsInfoArray = [itemsInfo]()
-        
-        for (index,item) in items.enumerate() {
-            let id = item[0]
-            let data = try? String(contentsOfURL: NSURL(string: host + "item/\(Int(id))" + sub)!)
-            let dd = data!.componentsSeparatedByString("&#")
-            let price = dd[1]
-            let name = dd[0]
-            itemsInfoArray.append(itemsInfo(name: name, price: Double(price)!, frame: itemFrames[index]))
-        }
-        
-        itemDataView.updateItems(itemsInfoArray)
-    }
-    
     // MARK: dismiss transition animation
     func viewToBeDismissed() -> UIView {
         let v = videoContainerView.subviews[0]
-        
+
         return v
+    }
+    
+    func presentFrame() -> CGRect {
+        let point = videoContainerView.frame.origin
+        let width = view.frame.width
+        print(width)
+        let height = width * (toFrame?.height)!/(toFrame?.width)!
+        return CGRect(origin: point, size: CGSize(width: width, height: height))
     }
     
     // MARK: present transition animation
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-
+        
         let vcc = self.storyboard!.instantiateViewControllerWithIdentifier("abc") as! ItemDetailsViewController
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! ItemCollectionViewCell
         
@@ -277,15 +263,16 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         u.frame = frame
         viewAnimate = u
         
-        vcc.itemID = Int(itemsID![indexPath.section][indexPath.item][0])
+        vcc.item = (videocontent?.items[indexPath.section][indexPath.item])!
+        print(vcc.item?.itemImageRatio)
         vcc.toFrame = frame
-        vcc.ratio = CGFloat(itemsID![indexPath.section][indexPath.item][1])
+        
         vcc.itemImageData = image
         
         if player?.rate == 1 {
             player?.pause()
             userRate = true
-        } 
+        }
         self.presentViewController(vcc, animated: true,completion: nil)
     }
     
@@ -295,7 +282,7 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
             userRate = false
         }
     }
-
+    
     func viewToBeAnimated() -> UIView {
         return viewAnimate!
     }
@@ -303,4 +290,4 @@ class ContentDetailViewController:AnimationViewController, presentingVCDeleage, 
         player?.removeTimeObserver(self.AVObserver!)
         print("content detail")
     }
-}
+ }

@@ -35,9 +35,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
 
             colorCollection.scrollToItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0), atScrollPosition: .CenteredHorizontally, animated: true)
             
-            let colorNumber = color![itemNumber].componentsSeparatedByString(",")[1]
-            
-            itemImage!.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(itemID!)/detail/item/\(colorNumber)")!)
+            itemImage!.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\((self.item?.allColorArray[itemNumber])!)/color")!)
             
             let newCell = colorCollection.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
 
@@ -49,20 +47,12 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         }
     }
     
-    private var color:[String]? {
-        didSet {
-            self.colorCollection.reloadData()
-        }
-    }
-    
-    var itemID:Int?
-    
-    var ratio:CGFloat?
+    var item:Item?
     
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
     let itemNameFont = font1
-    let priceFont = font1
+    let priceFont = UIFont(name: "IowanOldStyle-Bold", size: 20)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,9 +63,17 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         self.itemNameLabel.font = self.itemNameFont
         self.brandName.font = self.brandFont
         self.itemPrice.font = self.priceFont
-        getItemInfo()
+        updateItemViewInfo()
         
-        imageArrowView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: ratio!, constant: residualHeight).active = true
+        self.item?.getAllColor({
+            dispatch_async(dispatch_get_main_queue()){
+                self.colorCollection.reloadData()
+                print(self.itemImageContainerView.convertRect(self.itemImageContainerView.bounds, toView: nil))
+            }
+        })
+        
+        imageArrowView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!, constant: residualHeight).active = true
+        print(residualHeight)
         itemImage = UIImageView()
         itemImageContainerView.addSubview(itemImage!)
         itemImage?.fillInSuperView()
@@ -95,21 +93,12 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         layout.footerReferenceSize = layout.headerReferenceSize
     }
     
-    private func getItemInfo() {
-        let session = NSURLSession.sharedSession()
-        let task = session.dataTaskWithURL(NSURL(string: "http://54.223.65.44:8100/item/\(itemID!)/name/price/color/brand")!) {
-            data, response, error in
-            let ss = String(data: data!, encoding: NSUTF8StringEncoding)
-            let dd = ss!.componentsSeparatedByString("&#")
-            let px = dd[1]
-            let name = dd[0]
-            let brand = dd[3]
-            self.color = dd[2].componentsSeparatedByString(";")
-            self.brandName.setText = brand
-            self.itemPrice.setText = "￥" + px
-            self.itemNameLabel.setText = name
-        }
-        task.resume()
+    private func updateItemViewInfo() {
+        
+        self.brandName.setText = (item?.brand)!
+        self.itemPrice.setText = "￥\((item?.price)!)"
+        self.itemNameLabel.setText = (item?.name)!
+        
     }
 
     
@@ -120,10 +109,10 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
   
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("colorCell", forIndexPath: indexPath) as! colorCell
-        let info = color![indexPath.item].componentsSeparatedByString(",")
-        let colorNumber = info[1]
-        let colorName = info[0]
-        cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(itemID!)/detail/color/\(colorNumber)")!)
+   
+        
+        let colorName = item?.allColor[(item?.allColorArray[indexPath.item])!]
+        cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.id)/color")!)
         cell.colorImage.layer.masksToBounds = true
         cell.colorImage.layer.cornerRadius = cell.colorImage.frame.width/2
         cell.colorName.text = colorName
@@ -146,8 +135,10 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard color != nil else { return 0}
-        return (color?.count)!
+     
+        guard (item?.allColorArray.count)! > 0 else { return 0}
+   
+        return (item?.allColorArray.count)!
     }
     
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -187,10 +178,14 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         return itemImage!
     }
     
-    override func presentToFrame() -> CGRect {
-        let origin = itemImageContainerView.convertPoint(CGPointZero, toView: view)
+    func presentFrame() -> CGRect {
+        print(view.frame)
+        var origin = itemImageContainerView.convertPoint(CGPointZero, toView: view)
         let width = itemImageContainerView.frame.width
-        let height = itemImageContainerView.frame.width * ratio!
+        
+        origin.x = (view.frame.width - itemImageContainerView.frame.width)/2
+        let height = itemImageContainerView.frame.width / (item?.itemImageRatio!)!
+        print(CGRect(origin: origin, size: CGSize(width: width, height: height)))
         return CGRect(origin: origin, size: CGSize(width: width, height: height))
     }
 }

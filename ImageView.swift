@@ -10,9 +10,12 @@ extension UIImageView {
         let datatask = session.dataTaskWithURL(URL) {
             data, response, error in
             guard error == nil else { return }
-            let image = UIImage(data: data!)
+            guard let image = UIImage(data: data!) else {
+                print(URL)
+                return
+            }
             dispatch_async(dispatch_get_main_queue()) {
-                self.image = image!
+                self.image = image
             }
         }
         

@@ -12,6 +12,7 @@ protocol presentingVCDeleage:class {
     func viewToBeAnimated() -> UIView
     
     func dismissAnimatonComplete()
+
 }
 
 extension presentingVCDeleage {
@@ -21,6 +22,8 @@ extension presentingVCDeleage {
 
 protocol presentedVCDelegate:class {
     func viewToBeDismissed() -> UIView
+    
+    func presentFrame() -> CGRect
 }
 
 extension presentedVCDelegate {

@@ -7,4 +7,4 @@
 //
 import UIKit
 
-public let font1 = UIFont(name: "IowanOldStyle-Roman", size: 17)
+public let font1 = UIFont(name: "IowanOldStyle-Roman", size: 15)

@@ -34,7 +34,7 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
         let smallView = presentingViewVC.viewToBeAnimated()
         
         // toFrame
-        let toFrame = self.presentToFrame()
+        let toFrame = presentedVC.presentFrame()
       
 
         let duration = presentedVC.animateDuration()
@@ -81,12 +81,6 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
     }
     
     // 正常来讲，找到dismiss view的frame即可，但如果用autolayout，frame depend on image ratio的时候，是不知道frame的，只能viewdidlayoutsubviews后，才知道frame，因此subclass可以override这个function，给出frame。
-    func presentToFrame() -> CGRect {
-     
-        let v = self.animationDelegate!.viewToBeDismissed()
-        let toV = (self.animationDelegate as! UIViewController).view
-        return v.convertRect(v.bounds, toView: toV)
-    }
     
     deinit {
         print("animation controller")

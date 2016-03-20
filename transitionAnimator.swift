@@ -85,6 +85,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
             ifAutoLayout = true
         }
         
+        print(snapshot?.frame)
         snapshot!.frame = frame
         smallViewFrame = snapshot?.frame
         con?.addSubview(snapshot!)
