@@ -35,7 +35,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
 
             colorCollection.scrollToItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0), atScrollPosition: .CenteredHorizontally, animated: true)
             
-            itemImage!.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\((self.item?.allColorArray[itemNumber])!)/color")!)
+            itemImage!.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\((self.item?.allColorArray[itemNumber])!)/product")!)
             
             let newCell = colorCollection.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
 
@@ -112,7 +112,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
    
         
         let colorName = item?.allColor[(item?.allColorArray[indexPath.item])!]
-        cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.id)/color")!)
+        cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.allColorArray[indexPath.item])/color")!)
         cell.colorImage.layer.masksToBounds = true
         cell.colorImage.layer.cornerRadius = cell.colorImage.frame.width/2
         cell.colorName.text = colorName
