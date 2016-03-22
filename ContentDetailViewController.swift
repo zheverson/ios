@@ -47,7 +47,10 @@
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(videocontent?.id)
+        
+        let pan = UIPanDirectionGestureRecognizer(direction: .UpToDown,target: self, action: "aaa:")
+        self.view.addGestureRecognizer(pan)
+       
         fillCreatorView()
         videocontent?.getItems()
         itemsCollectionView.dataSource = self
@@ -55,8 +58,7 @@
         self.animationDelegate = self
         
         let ratio = (toFrame?.width)!/(toFrame?.height)!
-        print(toFrame?.size)
-        print(1/ratio)
+
         videoContainerView.heightAnchor.constraintEqualToAnchor(videoContainerView.widthAnchor, multiplier: 1/ratio).active = true
         
         itemsCollectionView.registerClass(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "normalheader")
@@ -65,6 +67,22 @@
         likeImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/util/like")!)
         cartImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/util/cart")!)
 
+    }
+    
+    @objc private func aaa(pan:UIPanGestureRecognizer) {
+        switch pan.state {
+        case .Began:
+            self.dismissBegin()
+        case .Changed:
+            // calculate user gesture input
+            let v = pan.view
+            let translation = pan.translationInView(v)
+            self.percent = fabs(translation.y*2/(v?.bounds.size.height)!)
+            self.dismissChanged()
+        case .Ended:
+            self.dismissComplete()
+        default: break
+        }
     }
     
     // MARK: item collection display view
@@ -246,7 +264,7 @@
     func presentFrame() -> CGRect {
         let point = videoContainerView.frame.origin
         let width = view.frame.width
-        print(width)
+  
         let height = width * (toFrame?.height)!/(toFrame?.width)!
         return CGRect(origin: point, size: CGSize(width: width, height: height))
     }
@@ -264,7 +282,7 @@
         viewAnimate = u
         
         vcc.item = (videocontent?.items[indexPath.section][indexPath.item])!
-        print(vcc.item?.itemImageRatio)
+   
         vcc.toFrame = frame
         
         vcc.itemImageData = image

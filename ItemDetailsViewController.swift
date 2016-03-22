@@ -5,6 +5,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     
     var itemImageData:UIImage?
     var itemImage: UIImageView?
+        
+    @IBOutlet weak var scrollContainerView: UIScrollView!
     
     @IBOutlet weak var itemImageContainerView: UIView!
     
@@ -23,12 +25,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     @IBOutlet weak var likeButton: UIButton!
     
     var cellFrame:CGRect?
-    
-    var residualHeight:CGFloat {
-        get {
-            return imageArrowView.frame.height - itemImageContainerView.frame.height
-        }
-    }
+
     var itemNumber = 0 {
         
         didSet {
@@ -49,6 +46,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     
     var item:Item?
     
+
+    
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
     let itemNameFont = font1
@@ -58,7 +57,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         super.viewDidLoad()
    
         self.animationDelegate = self
-
+        self.scrollContainerView.delegate = self
         // item price & name
         self.itemNameLabel.font = self.itemNameFont
         self.brandName.font = self.brandFont
@@ -68,12 +67,12 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         self.item?.getAllColor({
             dispatch_async(dispatch_get_main_queue()){
                 self.colorCollection.reloadData()
-                print(self.itemImageContainerView.convertRect(self.itemImageContainerView.bounds, toView: nil))
+
             }
         })
         
-        imageArrowView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!, constant: residualHeight).active = true
-        print(residualHeight)
+    itemImageContainerView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!).active = true
+        
         itemImage = UIImageView()
         itemImageContainerView.addSubview(itemImage!)
         itemImage?.fillInSuperView()
@@ -92,7 +91,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         layout.headerReferenceSize = CGSize(width: (colorCollection.frame.width - itemSize.width)/2, height: colorCollection.frame.height)
         layout.footerReferenceSize = layout.headerReferenceSize
     }
-    
+
     private func updateItemViewInfo() {
         
         self.brandName.setText = (item?.brand)!
@@ -141,14 +140,53 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         return (item?.allColorArray.count)!
     }
     
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let cell = collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
+        cell.colorName.textColor = UIColor.blackColor()
+        itemNumber = indexPath.item
+    }
+    
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        
+        if let v = scrollView as? UICollectionView {
+            let cell = v.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as? colorCell
+            if cell != nil {
+                cell!.colorName.textColor = UIColor.blackColor()
+            }
+        }
+    }
+    
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        guard scrollView === scrollContainerView else {return }
+        guard scrollView.tracking == true else { return }
+        if scrollView.contentOffset.y < 0 && percent == 0 {
+            self.dismissBegin()
+            print("start")
+            percent = abs(scrollView.contentOffset.y) / 100
+        } else if percent > 0 {
+            print(percent)
+            percent = abs(scrollView.contentOffset.y) / 100
+            self.dismissChanged()
+        }
+    }
+    
     func scrollViewDidEndDragging(scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if decelerate {return}
-        self.scrollViewDidEndDecelerating(scrollView)
+        
+        if scrollView === self.colorCollection {
+            if decelerate {return}
+            self.scrollViewDidEndDecelerating(scrollView)
+        } else if scrollView === scrollContainerView {
+
+            if percent > 0 {
+                print("aaaaaaaaaaa\(percent)")
+                self.dismissComplete()
+            }
+        }
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
    
-        let v = scrollView as! UICollectionView
+        if let v = scrollView as? UICollectionView {
         let inter = (v.collectionViewLayout as! UICollectionViewFlowLayout).minimumLineSpacing
         let y = v.frame.height/2 + v.frame.origin.y
         let x = v.frame.width/2 + v.frame.origin.x + inter/2
@@ -158,34 +196,24 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         let itemPath = v.indexPathForItemAtPoint(point) ?? v.indexPathForItemAtPoint(CGPoint(x: point.x - inter, y: point.y))
  
         itemNumber = (itemPath?.item)!
-    }
-    
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
-        cell.colorName.textColor = UIColor.blackColor()
-        itemNumber = indexPath.item
-    }
-    
-    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
-        let cell = (scrollView as! UICollectionView).cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as? colorCell
-        if cell != nil {
-            cell!.colorName.textColor = UIColor.blackColor()
         }
     }
     
+
+    
     // MARK: dismiss Animation
+    
     func viewToBeDismissed() -> UIView {
         return itemImage!
     }
     
     func presentFrame() -> CGRect {
-        print(view.frame)
+    
         var origin = itemImageContainerView.convertPoint(CGPointZero, toView: view)
         let width = itemImageContainerView.frame.width
         
         origin.x = (view.frame.width - itemImageContainerView.frame.width)/2
         let height = itemImageContainerView.frame.width / (item?.itemImageRatio!)!
-        print(CGRect(origin: origin, size: CGSize(width: width, height: height)))
         return CGRect(origin: origin, size: CGSize(width: width, height: height))
     }
 }

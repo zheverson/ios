@@ -60,7 +60,6 @@ extension UIView {
                 self.center = CGPoint(x: self.center.x + x, y: self.center.y + y)
                 }, completion: {
                     _ in
-                    print(time)
                     time += 1
                     if time < count*2 + 1 {
                         

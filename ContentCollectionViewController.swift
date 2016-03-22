@@ -55,7 +55,6 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         let l = collectionViewLayout as! UICollectionViewFlowLayout
         let mit = l.minimumInteritemSpacing
-        print(mit)
         let width:CGFloat = (self.view.frame.width - mit)/2
         let ratio = width/(91+(width/contents.feedsData[indexPath.item].thumb_ratio))
 

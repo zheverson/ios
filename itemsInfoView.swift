@@ -31,8 +31,6 @@ class itemsInfoView: UIView {
             let x = self.frame.width * CGFloat(index/number)
             let cell = itemCell(frame: CGRect(x: x, y: y, width: self.frame.width/CGFloat(number), height: self.frame.height - y*2), info: item)
             self.addSubview(cell)
-            print(self.frame)
-            print(cell.frame)
             let frame = self.convertRect(fromFrame[index], fromView: nil)
             cell.allAnimate(frame, count: 2, duration: 1.5)
         }

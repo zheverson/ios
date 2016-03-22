@@ -63,7 +63,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     
     // MARK:Interactive Dismiss Animation
     func startInteractiveTransition(transitionContext: UIViewControllerContextTransitioning) {
-        
+        print(4)
         context = transitionContext
         context?.viewForKey(UITransitionContextFromViewKey)?.hidden = true
         let con = context?.containerView()
@@ -84,8 +84,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
             snapshot!.removeConstraints(snapshot!.constraints)
             ifAutoLayout = true
         }
-        
-        print(snapshot?.frame)
+
         snapshot!.frame = frame
         smallViewFrame = snapshot?.frame
         con?.addSubview(snapshot!)
@@ -93,9 +92,10 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     }
     
     func interactiveUpdate(percent:CGFloat) {
-        
+        print(9)
   
         let toView = context?.viewForKey(UITransitionContextToViewKey)
+
         viewMapPercent(snapshot!, percent: percent, bigView: toView!)
         
         toView?.alpha = percent
@@ -141,10 +141,11 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
                         self.snapshot?.fillInSuperView()
                     }
                     fromView?.hidden = false
+                 
             })
         }
     }
-    
+
     // MARK:View Frame Computation
     private func viewMapPercent(v:UIView, percent:CGFloat, bigView:UIView) {
 

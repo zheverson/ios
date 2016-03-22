@@ -63,7 +63,7 @@ class VideoViewController: UIViewController {
         
         layer = AVView!.layer as? AVPlayerLayer
         layer?.player = player
-        print(player)
+        
         let tap = UITapGestureRecognizer(target: self, action: "videoViewTapped:")
         self.view.addGestureRecognizer(tap)
         
@@ -110,9 +110,7 @@ class VideoViewController: UIViewController {
             thumbImageView.removeFromSuperview()
             self.thumbImageView = nil
         }
-        
-        print(self.layer?.videoRect)
-        print(self.view.frame)
+
         
         if player!.status == .ReadyToPlay {
        
