@@ -43,21 +43,22 @@ class itemCell:UIView {
     init(frame: CGRect, info:Item) {
         super.init(frame: frame)
         //self.backgroundColor = UIColor.greenColor()
-        let name = UILabel(frame: CGRect(x: 10, y: 20, width: self.frame.width-30, height: 20))
-        let price = UILabel(frame: CGRect(x: 10, y: 60, width: self.frame.width-30, height: 20))
+        let name = UILabel(frame: CGRect(x: 10, y: 50, width: self.frame.width-30, height: 20))
+        let price = UILabel(frame: CGRect(x: 10, y: 80, width: self.frame.width-30, height: 20))
+        let brand = UILabel(frame: CGRect(x: 10, y: 20, width: self.frame.width-30, height: 20))
         
         name.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         price.autoresizingMask = [.FlexibleHeight, .FlexibleWidth]
-        self.addSubview(name)
-        self.addSubview(price)
+        brand.autoresizingMask = name.autoresizingMask
+        
+        self.addSubViews([brand,name,price])
         
         name.font = font1
         price.font = font1
-        name.text = info.name
-        price.text = String(info.price!)
-        name.sizeToFit()
-        price.sizeToFit()
-
+        brand.font = font1
+        brand.text = info.brand!
+        name.text = info.name!
+        price.text = "￥\(info.price!)"
     }
     
     required init?(coder aDecoder: NSCoder) {

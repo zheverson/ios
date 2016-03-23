@@ -24,6 +24,16 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     
     @IBOutlet weak var likeButton: UIButton!
     
+    @IBOutlet weak var itemSpecTextView: UITextView!
+    
+    @IBOutlet weak var itemSetLabel: UILabel!
+    
+    @IBOutlet weak var itemSetCollectionView: UICollectionView!
+    
+    @IBOutlet weak var relatedVideoLabel: UILabel!
+    
+    @IBOutlet weak var relatedVideoCollectionView: UICollectionView!
+ 
     var cellFrame:CGRect?
 
     var itemNumber = 0 {
@@ -71,7 +81,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
             }
         })
         
-    itemImageContainerView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!).active = true
+       itemImageContainerView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!).active = true
         
         itemImage = UIImageView()
         itemImageContainerView.addSubview(itemImage!)
@@ -90,6 +100,13 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         let itemSize = layout.itemSize
         layout.headerReferenceSize = CGSize(width: (colorCollection.frame.width - itemSize.width)/2, height: colorCollection.frame.height)
         layout.footerReferenceSize = layout.headerReferenceSize
+        
+        itemSetLabel.setText = "可搭配其它套餐"
+        itemSetLabel.font = font1
+        
+        relatedVideoLabel.setText = "包含此产品的视频"
+        relatedVideoLabel.font = font1
+  
     }
 
     private func updateItemViewInfo() {
@@ -104,51 +121,73 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case colorCollection:
+            return (item?.allColorArray.count)!
+        case itemSetCollectionView:
+            return 0
+        case relatedVideoCollectionView:
+            return 0
+        default:
+            return 0
+        }
+    }
 
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
-  
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("colorCell", forIndexPath: indexPath) as! colorCell
-   
         
-        let colorName = item?.allColor[(item?.allColorArray[indexPath.item])!]
-        cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.allColorArray[indexPath.item])/color")!)
-        cell.colorImage.layer.masksToBounds = true
-        cell.colorImage.layer.cornerRadius = cell.colorImage.frame.width/2
-        cell.colorName.text = colorName
-        cell.colorName.font = colorFont
-        return cell
+        switch collectionView {
+        case colorCollection:
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("colorCell", forIndexPath: indexPath) as! colorCell
+            
+            
+            let colorName = item?.allColor[(item?.allColorArray[indexPath.item])!]
+            cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.allColorArray[indexPath.item])/color")!)
+            cell.colorImage.layer.masksToBounds = true
+            cell.colorImage.layer.cornerRadius = cell.colorImage.frame.width/2
+            cell.colorName.text = colorName
+            cell.colorName.font = colorFont
+            return cell
+        default:
+            return UICollectionViewCell()
+        }
     }
     
     func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView {
         
-        switch kind {
-        case UICollectionElementKindSectionHeader:
-            let v = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: "colorHeader", forIndexPath: indexPath)
-    
-               return v
+        switch collectionView {
+        case colorCollection:
+            switch kind {
+            case UICollectionElementKindSectionHeader:
+                let v = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionHeader, withReuseIdentifier: "colorHeader", forIndexPath: indexPath)
+                
+                return v
+            default:
+                let v = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: "colorFooter", forIndexPath: indexPath)
+                
+                return v
+            }
         default:
-            let v = collectionView.dequeueReusableSupplementaryViewOfKind(UICollectionElementKindSectionFooter, withReuseIdentifier: "colorFooter", forIndexPath: indexPath)
-
-            return v
+            return UICollectionReusableView()
         }
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-     
-        guard (item?.allColorArray.count)! > 0 else { return 0}
-   
-        return (item?.allColorArray.count)!
-    }
-    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        let cell = collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
-        cell.colorName.textColor = UIColor.blackColor()
-        itemNumber = indexPath.item
+        switch collectionView{
+        case colorCollection:
+            let cell = collectionView.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
+            cell.colorName.textColor = UIColor.blackColor()
+            itemNumber = indexPath.item
+        default:
+            break
+        }
     }
     
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         
-        if let v = scrollView as? UICollectionView {
+        if scrollView === colorCollection {
+            let v = scrollView as! UICollectionView
             let cell = v.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as? colorCell
             if cell != nil {
                 cell!.colorName.textColor = UIColor.blackColor()
@@ -161,10 +200,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         guard scrollView.tracking == true else { return }
         if scrollView.contentOffset.y < 0 && percent == 0 {
             self.dismissBegin()
-            print("start")
             percent = abs(scrollView.contentOffset.y) / 100
         } else if percent > 0 {
-            print(percent)
             percent = abs(scrollView.contentOffset.y) / 100
             self.dismissChanged()
         }
@@ -178,29 +215,29 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         } else if scrollView === scrollContainerView {
 
             if percent > 0 {
-                print("aaaaaaaaaaa\(percent)")
+
                 self.dismissComplete()
             }
         }
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-   
-        if let v = scrollView as? UICollectionView {
-        let inter = (v.collectionViewLayout as! UICollectionViewFlowLayout).minimumLineSpacing
-        let y = v.frame.height/2 + v.frame.origin.y
-        let x = v.frame.width/2 + v.frame.origin.x + inter/2
         
-        let point = scrollView.convertPoint(CGPoint(x: x, y: y), fromView: view)
-        
-        let itemPath = v.indexPathForItemAtPoint(point) ?? v.indexPathForItemAtPoint(CGPoint(x: point.x - inter, y: point.y))
- 
-        itemNumber = (itemPath?.item)!
+        if scrollView === colorCollection {
+            let v = scrollView as! UICollectionView
+            let inter = (v.collectionViewLayout as! UICollectionViewFlowLayout).minimumLineSpacing
+            let y = v.frame.height/2 + v.frame.origin.y
+            let x = v.frame.width/2 + v.frame.origin.x + inter/2
+            
+            let point = scrollView.convertPoint(CGPoint(x: x, y: y), fromView: view)
+            
+            if let itemPath = v.indexPathForItemAtPoint(point) ?? v.indexPathForItemAtPoint(CGPoint(x: point.x - inter, y: point.y)) {
+            
+            itemNumber = itemPath.item
+        }
         }
     }
-    
-
-    
+ 
     // MARK: dismiss Animation
     
     func viewToBeDismissed() -> UIView {
@@ -216,6 +253,10 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         let height = itemImageContainerView.frame.width / (item?.itemImageRatio!)!
         return CGRect(origin: origin, size: CGSize(width: width, height: height))
     }
+
+    
+    
+    
 }
     
     

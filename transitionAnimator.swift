@@ -63,7 +63,7 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     
     // MARK:Interactive Dismiss Animation
     func startInteractiveTransition(transitionContext: UIViewControllerContextTransitioning) {
-        print(4)
+ 
         context = transitionContext
         context?.viewForKey(UITransitionContextFromViewKey)?.hidden = true
         let con = context?.containerView()
@@ -92,7 +92,6 @@ class transitionAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVie
     }
     
     func interactiveUpdate(percent:CGFloat) {
-        print(9)
   
         let toView = context?.viewForKey(UITransitionContextToViewKey)
 

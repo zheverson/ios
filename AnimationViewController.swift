@@ -41,7 +41,7 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
     
     // MARK:Interactive Dismiss Transition
     func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        print(3)
+  
         let dismissedVC = dismissed as! presentedVCDelegate
         let dismissView = dismissedVC.viewToBeDismissed()
 
@@ -51,12 +51,12 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
     }
     
     func interactionControllerForDismissal(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        print(2)
+     
         return self.animator
     }
     
     func dismissBegin(){
-        print(1)
+   
         self.dismissViewControllerAnimated(true) {
             self.percent = 0
             self.animator = nil
@@ -64,7 +64,7 @@ class AnimationViewController: UIViewController, UIViewControllerTransitioningDe
     }
     
     func dismissChanged() {
-        print(8)
+   
         self.animator?.interactiveUpdate(percent)
     }
     
