@@ -19,15 +19,3 @@ extension presentingVCDeleage {
     func dismissAnimatonComplete(){
     }
 }
-
-protocol presentedVCDelegate:class {
-    func viewToBeDismissed() -> UIView
-    
-    func presentFrame() -> CGRect
-}
-
-extension presentedVCDelegate {
-    func animateDuration() -> NSTimeInterval {
-        return 1
-    }
-}

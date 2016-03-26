@@ -67,30 +67,32 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-
+        
+        print("aaaa")
         let feed = contents.feedsData[indexPath.item]
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell
         guard let creator_image = cell.creator_thumb.image, image = cell.video_thumb.image  else {
             self.networkAlertShow()
             return
         }
-    
-        let cellFrame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)
+        
         let svc = self.storyboard?.instantiateViewControllerWithIdentifier("contentDetail") as! ContentDetailViewController
    
         svc.videocontent = feed
          
         svc.thumb = image
-        svc.toFrame = cellFrame
         
         svc.creatorName = feed.name
         
         svc.creatorThumb = creator_image
-        
+        print("aaaa")
         self.presentViewController(svc, animated: true){
 
         }
+        print("bbb")
     }
+    
+
     
     func viewToBeAnimated() -> UIView {
         let path = collectionView?.indexPathsForSelectedItems()

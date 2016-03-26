@@ -64,12 +64,12 @@ class VideoViewController: UIViewController {
         layer = AVView!.layer as? AVPlayerLayer
         layer?.player = player
         
-        let tap = UITapGestureRecognizer(target: self, action: "videoViewTapped:")
+        let tap = UITapGestureRecognizer(target: self, action: #selector(VideoViewController.videoViewTapped(_:)))
         self.view.addGestureRecognizer(tap)
         
         videoSlider!.minimumValue = 0
         videoSlider?.maximumValue = duration ?? 1
-        videoSlider?.addTarget(self, action: "sliderValueChanged:", forControlEvents:.ValueChanged )
+        videoSlider?.addTarget(self, action: #selector(VideoViewController.sliderValueChanged(_:)), forControlEvents: .TouchDown)
         videoSlider?.alpha = 0
         
         if let thumbImage = thumbImage {

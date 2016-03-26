@@ -1,19 +1,29 @@
 import UIKit
 
+struct offSetScale {
+    var offSet: CGPoint
+    var scale: CGPoint
+    
+    func myPercent(percent:CGFloat) -> offSetScale {
+        let os = CGPoint(x: offSet.x * percent , y: offSet.y * percent)
+        let sc = percentMultipleCo(scale, percent: percent)
+        return offSetScale(offSet: os, scale: sc)
+    }
+    
+    
+    private func percentMultipleCo(scale: CGPoint, percent:CGFloat) -> CGPoint {
+        return CGPoint(x: 1 + (scale.x-1) * percent,y:1 + (scale.y-1) * percent)
+    }
+}
+
 extension UIView {
-    func cornerize(ratio: CGFloat?) {
+    func cornerize(length: CGFloat?) {
         self.layer.masksToBounds = true
-        if ratio != nil {
-            self.layer.cornerRadius = ratio!
+        if length != nil {
+            self.layer.cornerRadius = length!
         } else {
             self.layer.cornerRadius = self.frame.width/2
         }
-    }
-    
-    func nextViewOrigin() -> CGPoint {
-        let x = self.frame.origin.x + self.frame.width
-        let y = self.frame.origin.y + self.frame.height
-        return CGPoint(x: x, y: y)
     }
     
     func addSubViews(sub:[UIView]) {
@@ -23,16 +33,49 @@ extension UIView {
     }
     
     func fillInSuperView() {
-        guard self.superview != nil else {
-            print("no super view")
-            return
-        }
+        assert(self.superview != nil, "no super view")
         self.translatesAutoresizingMaskIntoConstraints = false
         self.topAnchor.constraintEqualToAnchor(self.superview?.topAnchor).active = true
         self.leftAnchor.constraintEqualToAnchor(self.superview?.leftAnchor).active = true
         self.heightAnchor.constraintEqualToAnchor(self.superview?.heightAnchor).active = true
         self.widthAnchor.constraintEqualToAnchor(self.superview?.widthAnchor).active = true
     }
+    
+    // 从本身view，return的是变化
+    func calculateTransform(toView: UIView, toFrame: CGRect) -> offSetScale {
+        
+       // find toViewCenter point relative to self coordinate system
+        let translate = centerDistance(toView, toFrame: toFrame)
+    
+  
+        // transform scale
+        let sx = toFrame.width / self.frame.width
+        let sy = toFrame.height / self.frame.height
+        let scaleTransform = CGPoint(x: sx, y: sy)
+
+        return offSetScale(offSet: CGPoint(x: translate.x,y:translate.y), scale: scaleTransform)
+    }
+    
+    // 把change center and scale，这个para是最终的位置
+    
+    // 是toview center - self center，理论上来说，得两个view有共同的reference，但实际上就算没有共同，也不会报错
+    func centerDistance(toView:UIView, toFrame: CGRect) -> CGPoint {
+
+        let toViewCenter = self.superview!.convertPoint(CGPoint(x: toFrame.origin.x + toFrame.width/2, y: toFrame.origin.y + toFrame.height/2), fromView: toView)
+        
+        return CGPoint(x: toViewCenter.x - self.center.x, y: toViewCenter.y - self.center.y)
+    }
+    
+    // return 的是变化
+    func transformForView2(view2:UIView, ofsc:offSetScale) -> offSetScale {
+        let distance = centerDistance(view2, toFrame: view2.bounds)
+
+        let x = distance.x * (ofsc.scale.x-1) + ofsc.offSet.x
+        let y = distance.y * (ofsc.scale.y-1) + ofsc.offSet.y
+  
+        return offSetScale(offSet: CGPoint(x: x,y:y), scale: ofsc.scale)
+    }
+
     
     func allAnimate(fromFrame:CGRect, count:Int, duration:NSTimeInterval) {
         let fromX = fromFrame.origin.x + fromFrame.width/2
@@ -56,13 +99,11 @@ extension UIView {
             UIView.animateWithDuration(duration/(Double(count)*2), delay: 0, options: .CurveLinear, animations: {
                 self.transform = CGAffineTransformRotate(self.transform, CGFloat(M_PI))
                 self.transform = CGAffineTransformScale(self.transform, sx, sy)
-                
                 self.center = CGPoint(x: self.center.x + x, y: self.center.y + y)
                 }, completion: {
                     _ in
                     time += 1
                     if time < count*2 + 1 {
-                        
                         animate()
                     }
             })
@@ -70,8 +111,6 @@ extension UIView {
         animate()
     }
 }
-
-
 
 extension UICollectionViewFlowLayout {
     func lengthForSectionAtIndex(index:Int) -> CGFloat {

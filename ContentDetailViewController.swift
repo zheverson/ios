@@ -7,7 +7,7 @@
  
  public var start:CFAbsoluteTime = 0
  
- class ContentDetailViewController:AnimationViewController, presentingVCDeleage, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, presentedVCDelegate {
+ class ContentDetailViewController: UIViewController,presentingVCDeleage, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
     
     // MARK: view property
     var creatorThumb:UIImage?
@@ -36,7 +36,13 @@
     var interSectionSpace:CGFloat = 20
     
     var thumb: UIImage?
+    var ratio:CGFloat {
+        get {
+            return (thumb?.size.width)!/(thumb?.size.height)!
+        }
+    }
     
+    var contentVCTransition:ViewMapTransition?
     var videocontent:videoContent?
     
     private var AVObserver:AnyObject?
@@ -47,17 +53,12 @@
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setUpTransitionDelegate()
         
-        let pan = UIPanDirectionGestureRecognizer(direction: .UpToDown,target: self, action: "aaa:")
-        self.view.addGestureRecognizer(pan)
-       
         fillCreatorView()
         videocontent?.getItems()
         itemsCollectionView.dataSource = self
         itemsCollectionView.delegate = self
-        self.animationDelegate = self
-        
-        let ratio = (toFrame?.width)!/(toFrame?.height)!
 
         videoContainerView.heightAnchor.constraintEqualToAnchor(videoContainerView.widthAnchor, multiplier: 1/ratio).active = true
         
@@ -69,21 +70,7 @@
 
     }
     
-    @objc private func aaa(pan:UIPanGestureRecognizer) {
-        switch pan.state {
-        case .Began:
-            self.dismissBegin()
-        case .Changed:
-            // calculate user gesture input
-            let v = pan.view
-            let translation = pan.translationInView(v)
-            self.percent = fabs(translation.y*2/(v?.bounds.size.height)!)
-            self.dismissChanged()
-        case .Ended:
-            self.dismissComplete()
-        default: break
-        }
-    }
+
     
     // MARK: item collection display view
     
@@ -255,17 +242,12 @@
     }
     
     // MARK: dismiss transition animation
-    func viewToBeDismissed() -> UIView {
-        let v = videoContainerView.subviews[0]
-
-        return v
-    }
     
     func presentFrame() -> CGRect {
         let point = videoContainerView.frame.origin
         let width = view.frame.width
   
-        let height = width * (toFrame?.height)!/(toFrame?.width)!
+        let height = width / ratio
         return CGRect(origin: point, size: CGSize(width: width, height: height))
     }
     
@@ -282,8 +264,6 @@
         viewAnimate = u
         
         vcc.item = (videocontent?.items[indexPath.section][indexPath.item])!
-   
-        vcc.toFrame = frame
         
         vcc.itemImageData = image
         
@@ -292,6 +272,35 @@
             userRate = true
         }
         self.presentViewController(vcc, animated: true,completion: nil)
+    }
+    
+    // MARK: transition delegate
+    func setUpTransitionDelegate() {
+        contentVCTransition = ViewMapTransition(animateView: videoContainerView.subviews[0],toFrame: self.presentFrame(), duration: 3)
+        self.transitioningDelegate = contentVCTransition
+        
+        let pan = UIPanDirectionGestureRecognizer(direction: .UpToDown,target: self, action: #selector(ContentDetailViewController.aaa(_:)))
+        self.view.addGestureRecognizer(pan)
+    }
+    
+    @objc private func aaa(pan:UIPanGestureRecognizer) {
+        let v = pan.view
+        let translation = pan.translationInView(v)
+        let percent = fabs(translation.y*2/(v?.bounds.size.height)!)
+        
+        switch pan.state {
+        case .Began:
+            self.dismissViewControllerAnimated(true){
+                print(9)
+            }
+        case .Changed:
+        
+            contentVCTransition?.update(percent)
+        case .Ended:
+            
+            contentVCTransition?.complete(percent,threshold: 0.5)
+        default: break
+        }
     }
     
     func dismissAnimatonComplete() {
@@ -304,6 +313,7 @@
     func viewToBeAnimated() -> UIView {
         return viewAnimate!
     }
+    
     deinit {
         player?.removeTimeObserver(self.AVObserver!)
         print("content detail")

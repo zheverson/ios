@@ -1,7 +1,6 @@
-
 import UIKit
 
-class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, presentedVCDelegate {
+class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     
     var itemImageData:UIImage?
     var itemImage: UIImageView?
@@ -33,11 +32,12 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     @IBOutlet weak var relatedVideoLabel: UILabel!
     
     @IBOutlet weak var relatedVideoCollectionView: UICollectionView!
+    
+    var itemVCTransition: ViewMapTransition!
  
     var cellFrame:CGRect?
 
     var itemNumber = 0 {
-        
         didSet {
 
             colorCollection.scrollToItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0), atScrollPosition: .CenteredHorizontally, animated: true)
@@ -46,17 +46,12 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
             
             let newCell = colorCollection.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
 
-       
             UIView.animateWithDuration(3) {
-                
                 newCell.colorName.textColor = UIColor(red: 1, green: 215/255, blue: 0, alpha: 1)
             }
         }
     }
-    
     var item:Item?
-    
-
     
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
@@ -65,8 +60,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
 
     override func viewDidLoad() {
         super.viewDidLoad()
-   
-        self.animationDelegate = self
+        
         self.scrollContainerView.delegate = self
         // item price & name
         self.itemNameLabel.font = self.itemNameFont
@@ -77,7 +71,6 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         self.item?.getAllColor({
             dispatch_async(dispatch_get_main_queue()){
                 self.colorCollection.reloadData()
-
             }
         })
         
@@ -87,6 +80,7 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         itemImageContainerView.addSubview(itemImage!)
         itemImage?.fillInSuperView()
         itemImage?.image = itemImageData
+        setupTransitionDelegate()
         
         // like and cart button
         cartButton.startDownloadImage(NSURL(string: "http://54.223.65.44:8100/static/image/util/cart")!)
@@ -106,18 +100,15 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         
         relatedVideoLabel.setText = "包含此产品的视频"
         relatedVideoLabel.font = font1
-  
     }
-
+    
     private func updateItemViewInfo() {
         
         self.brandName.setText = (item?.brand)!
         self.itemPrice.setText = "￥\((item?.price)!)"
         self.itemNameLabel.setText = (item?.name)!
-        
     }
 
-    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -196,14 +187,19 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
+        
+        
         guard scrollView === scrollContainerView else {return }
         guard scrollView.tracking == true else { return }
-        if scrollView.contentOffset.y < 0 && percent == 0 {
-            self.dismissBegin()
-            percent = abs(scrollView.contentOffset.y) / 100
-        } else if percent > 0 {
-            percent = abs(scrollView.contentOffset.y) / 100
-            self.dismissChanged()
+        
+        if scrollView.contentOffset.y < 0 && !(itemVCTransition.didStart) {
+            
+            self.dismissViewControllerAnimated(true, completion: nil)
+            itemVCTransition.didStart = true
+            
+        } else if itemVCTransition.didStart {
+            
+            itemVCTransition?.update(abs(scrollView.contentOffset.y) / 100)
         }
     }
     
@@ -214,9 +210,8 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
             self.scrollViewDidEndDecelerating(scrollView)
         } else if scrollView === scrollContainerView {
 
-            if percent > 0 {
-
-                self.dismissComplete()
+            if itemVCTransition.didStart {
+                itemVCTransition?.complete(abs(scrollView.contentOffset.y) / 100, threshold: 0.5)
             }
         }
     }
@@ -237,11 +232,10 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         }
         }
     }
- 
-    // MARK: dismiss Animation
     
-    func viewToBeDismissed() -> UIView {
-        return itemImage!
+    func setupTransitionDelegate() {
+        itemVCTransition = ViewMapTransition(animateView: itemImage!,toFrame: self.presentFrame(), duration: 1.5)
+        self.transitioningDelegate = itemVCTransition
     }
     
     func presentFrame() -> CGRect {
@@ -253,10 +247,6 @@ class ItemDetailsViewController: AnimationViewController, UICollectionViewDataSo
         let height = itemImageContainerView.frame.width / (item?.itemImageRatio!)!
         return CGRect(origin: origin, size: CGSize(width: width, height: height))
     }
-
-    
-    
-    
 }
     
     

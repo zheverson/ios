@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3317CE5D1C82A0BC00330B76 /* AnimationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3317CE5C1C82A0BC00330B76 /* AnimationViewController.swift */; };
-		3317CE5F1C82A18400330B76 /* transitionAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3317CE5E1C82A18400330B76 /* transitionAnimator.swift */; };
+		33084FF21CA51DE800BF45F5 /* ViewMapTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33084FF11CA51DE800BF45F5 /* ViewMapTransition.swift */; };
 		331A3B521C950C0000DE5D1F /* ItemCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331A3B511C950C0000DE5D1F /* ItemCollectionViewCell.swift */; };
 		336A4A571C8F3F870095AB2E /* ItemDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336A4A561C8F3F870095AB2E /* ItemDetailsViewController.swift */; };
 		336A4A591C8F3FC50095AB2E /* shadowArrowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 336A4A581C8F3FC50095AB2E /* shadowArrowView.swift */; };
@@ -29,12 +28,13 @@
 		33CDADE31C5C908C00D5E666 /* View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CDADE21C5C908C00D5E666 /* View.swift */; };
 		33CE7ABC1C97BAA600447BB7 /* animation protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CE7ABB1C97BAA600447BB7 /* animation protocol.swift */; };
 		33D307731C571A7B00CDC39C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 33D307721C571A7B00CDC39C /* Main.storyboard */; };
+		33D56B641CA3BE8C001ACDDC /* StaticAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D56B631CA3BE8C001ACDDC /* StaticAnimator.swift */; };
+		33D56B661CA3BF3C001ACDDC /* InteractiveAnimator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D56B651CA3BF3C001ACDDC /* InteractiveAnimator.swift */; };
 		33F2A3361C91521800968E06 /* NetworkAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F2A3351C91521800968E06 /* NetworkAlert.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3317CE5C1C82A0BC00330B76 /* AnimationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimationViewController.swift; sourceTree = SOURCE_ROOT; };
-		3317CE5E1C82A18400330B76 /* transitionAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = transitionAnimator.swift; sourceTree = SOURCE_ROOT; };
+		33084FF11CA51DE800BF45F5 /* ViewMapTransition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewMapTransition.swift; sourceTree = SOURCE_ROOT; };
 		331A3B511C950C0000DE5D1F /* ItemCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemCollectionViewCell.swift; sourceTree = SOURCE_ROOT; };
 		336A4A561C8F3F870095AB2E /* ItemDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ItemDetailsViewController.swift; sourceTree = "<group>"; };
 		336A4A581C8F3FC50095AB2E /* shadowArrowView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shadowArrowView.swift; sourceTree = "<group>"; };
@@ -57,6 +57,8 @@
 		33D3075C1C5718BB00CDC39C /* ibuydeal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ibuydeal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33D3076B1C5718BB00CDC39C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33D307721C571A7B00CDC39C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		33D56B631CA3BE8C001ACDDC /* StaticAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StaticAnimator.swift; sourceTree = SOURCE_ROOT; };
+		33D56B651CA3BF3C001ACDDC /* InteractiveAnimator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InteractiveAnimator.swift; sourceTree = SOURCE_ROOT; };
 		33F2A3351C91521800968E06 /* NetworkAlert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkAlert.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -102,8 +104,9 @@
 		3317CE591C828BF500330B76 /* Animation Transition */ = {
 			isa = PBXGroup;
 			children = (
-				3317CE5C1C82A0BC00330B76 /* AnimationViewController.swift */,
-				3317CE5E1C82A18400330B76 /* transitionAnimator.swift */,
+				33084FF11CA51DE800BF45F5 /* ViewMapTransition.swift */,
+				33D56B631CA3BE8C001ACDDC /* StaticAnimator.swift */,
+				33D56B651CA3BF3C001ACDDC /* InteractiveAnimator.swift */,
 				33CE7ABB1C97BAA600447BB7 /* animation protocol.swift */,
 			);
 			name = "Animation Transition";
@@ -276,6 +279,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33B327431C5E204900E4B470 /* ImageView.swift in Sources */,
+				33D56B661CA3BF3C001ACDDC /* InteractiveAnimator.swift in Sources */,
 				33CDADDF1C5C879200D5E666 /* Model.swift in Sources */,
 				33709A6B1C9A9C9D000E35CC /* Font.swift in Sources */,
 				33F2A3361C91521800968E06 /* NetworkAlert.swift in Sources */,
@@ -284,15 +288,15 @@
 				33CE7ABC1C97BAA600447BB7 /* animation protocol.swift in Sources */,
 				33CDADD91C5C866400D5E666 /* CollectionViewCell.swift in Sources */,
 				336A4A5B1C8F3FCC0095AB2E /* colorCell.swift in Sources */,
-				3317CE5F1C82A18400330B76 /* transitionAnimator.swift in Sources */,
 				33CDADDD1C5C86A900D5E666 /* ContentDetailViewController.swift in Sources */,
 				33CDADD51C5C861100D5E666 /* WaterFallLayout.swift in Sources */,
 				33CDADE31C5C908C00D5E666 /* View.swift in Sources */,
+				33D56B641CA3BE8C001ACDDC /* StaticAnimator.swift in Sources */,
 				33CDADE11C5C881900D5E666 /* DataProcess.swift in Sources */,
 				338C15991C82E2A200543B87 /* UIPanDirectionGestureRecognizer.swift in Sources */,
 				33CDADD31C5C85F000D5E666 /* ContentCollectionViewController.swift in Sources */,
-				3317CE5D1C82A0BC00330B76 /* AnimationViewController.swift in Sources */,
 				339E715F1C78628300188D0B /* VideoViewController.swift in Sources */,
+				33084FF21CA51DE800BF45F5 /* ViewMapTransition.swift in Sources */,
 				336A4A571C8F3F870095AB2E /* ItemDetailsViewController.swift in Sources */,
 				33CDADD11C5C85AD00D5E666 /* AppDelegate.swift in Sources */,
 				33709A691C9A8DBE000E35CC /* itemsInfoView.swift in Sources */,
