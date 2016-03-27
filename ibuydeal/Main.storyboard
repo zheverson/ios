@@ -440,23 +440,23 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xYU-vi-HrC">
-                                <rect key="frame" x="532" y="556" width="40" height="40"/>
+                                <rect key="frame" x="532" y="566" width="40" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="xYU-vi-HrC" secondAttribute="height" multiplier="1:1" id="GYB-Pc-tnA"/>
                                     <constraint firstAttribute="width" constant="40" id="z9G-ZF-25J"/>
                                 </constraints>
                             </imageView>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Dq4-id-dkR">
-                                <rect key="frame" x="525" y="493" width="55" height="55"/>
+                                <rect key="frame" x="525" y="503" width="55" height="55"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="53f-Ke-Nmh"/>
                                     <constraint firstAttribute="width" secondItem="Dq4-id-dkR" secondAttribute="height" multiplier="1:1" id="Rce-FG-4fV"/>
                                 </constraints>
                             </imageView>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="yhZ-Kh-FLK">
-                                <rect key="frame" x="0.0" y="383" width="600" height="100"/>
+                                <rect key="frame" x="0.0" y="383" width="600" height="110"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="Mu4-24-h3d"/>
+                                    <constraint firstAttribute="height" constant="110" id="Mu4-24-h3d"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="pcZ-UN-hLr">
                                     <size key="itemSize" width="70" height="70"/>
@@ -466,7 +466,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="itemImage" id="Eov-Vb-2IE" customClass="ItemCollectionViewCell" customModule="ibuydeal" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="15" width="70" height="70"/>
+                                        <rect key="frame" x="0.0" y="20" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="70" height="70"/>
@@ -498,7 +498,7 @@
                                 </connections>
                             </containerView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CcL-KZ-S2P" customClass="itemsInfoView" customModule="ibuydeal" customModuleProvider="target">
-                                <rect key="frame" x="20" y="493" width="495" height="130"/>
+                                <rect key="frame" x="20" y="503" width="495" height="130"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="130" id="beW-Hd-VGU"/>

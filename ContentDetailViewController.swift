@@ -87,6 +87,7 @@
         let itemID = ((videocontent?.items[indexPath.section][indexPath.item])?.id)!
         let url = NSURL(string: host + "static/image/item/\(itemID)/product")
         cell.itemImage.startDownload(url!)
+   
         return cell
     }
     
@@ -101,20 +102,46 @@
         }
     }
     
+    // cell size equal image size equal cellHeight * ratio
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
         return CGSize(width: cellHeight * (videocontent!.items[indexPath.section][indexPath.item]).itemImageRatio!, height: cellHeight)
     }
     
+    
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         if section == 0 {
             return collectionView.bounds.size
-        } else { return CGSizeZero }
+        } else {
+            return CGSizeZero
+        }
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForFooterInSection section: Int) -> CGSize {
         if section == (videocontent?.items.count)! - 1 {
             return collectionView.bounds.size
-        } else { return CGSize(width: interSectionSpace, height: collectionView.frame.height) }
+        } else {
+            return headerSize(collectionViewLayout as! UICollectionViewFlowLayout, section: section)
+        }
+    }
+    
+    private func headerSize(layout:UICollectionViewFlowLayout, section:Int) -> CGSize {
+        guard section < videocontent?.items.count else {
+            return CGSize(width: (layout.collectionView?.frame.width)! / 2, height: (layout.collectionView?.frame.height)!)
+        }
+        
+        let width1 = sectionWidth(section, layout: layout)
+        let width2 = sectionWidth(section + 1, layout: layout)
+        let headerWidth = max(width1, width2)
+        return CGSize(width: headerWidth/4 + 5, height: layout.collectionView!.frame.height)
+    }
+
+    private func sectionWidth(section:Int, layout:UICollectionViewFlowLayout) -> CGFloat {
+        var width:CGFloat = 0
+        for i in videocontent!.items[section] {
+            width += i.itemImageRatio! * cellHeight
+        }
+        width += CGFloat(((videocontent?.items[section].count)! - 1)) * layout.minimumInteritemSpacing
+        return width
     }
     
     // MARK: video view segue
