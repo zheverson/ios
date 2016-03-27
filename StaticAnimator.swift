@@ -43,8 +43,7 @@ class StaticAnimator: NSObject, UIViewControllerAnimatedTransitioning {
             fromView?.alpha = 0
             }, completion:{
                 _ in
-                print(fromView?.frame)
-                print(fromView?.center)
+ 
                 self.snapshot.removeFromSuperview()
                 toView?.hidden = false
                 transitionContext.completeTransition(true)

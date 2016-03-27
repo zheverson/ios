@@ -134,7 +134,7 @@
                 [weak self] time in
                 guard self != nil else { return }
                 let second = CGFloat(CMTimeGetSeconds(time))
-                print(second)
+      
                 self!.itemsCollectionView!.setContentOffset(CGPoint(x: self!.itemViewOffset(second), y: 0), animated: true)
                 
                 let sectionIndex = self?.getSecondIndex(second)
@@ -276,7 +276,7 @@
     
     // MARK: transition delegate
     func setUpTransitionDelegate() {
-        contentVCTransition = ViewMapTransition(animateView: videoContainerView.subviews[0],toFrame: self.presentFrame(), duration: 3)
+        contentVCTransition = ViewMapTransition(animateView: videoContainerView.subviews[0],toFrame: self.presentFrame(), duration: 1)
         self.transitioningDelegate = contentVCTransition
         
         let pan = UIPanDirectionGestureRecognizer(direction: .UpToDown,target: self, action: #selector(ContentDetailViewController.aaa(_:)))
@@ -291,7 +291,7 @@
         switch pan.state {
         case .Began:
             self.dismissViewControllerAnimated(true){
-                print(9)
+             
             }
         case .Changed:
         

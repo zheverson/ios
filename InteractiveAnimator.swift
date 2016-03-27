@@ -29,17 +29,17 @@ class InteractiveAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVi
     }
     
     func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-        print(4)
+  
         return 3
     }
     
     func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-        print(5)
+  
     }
     
     func startInteractiveTransition(transitionContext: UIViewControllerContextTransitioning) {
         
-        print(6)
+    
         context = transitionContext
         context?.viewForKey(UITransitionContextFromViewKey)?.hidden = true
         
@@ -112,7 +112,7 @@ class InteractiveAnimator: NSObject, UIViewControllerAnimatedTransitioning, UIVi
        
                 }, completion: {
                     _ in
-                    print(10)
+                 
                     self.context?.finishInteractiveTransition()
                     self.context?.completeTransition(true)
                     self.snapshot.removeFromSuperview()

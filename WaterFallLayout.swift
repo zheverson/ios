@@ -4,17 +4,16 @@ import UIKit
 class WaterfallLayout: UICollectionViewFlowLayout {
     
     var itemLayoutAttributesOfSection = [[UICollectionViewLayoutAttributes]]()
-    var columnNumber = 2
     var columnPosition = [CGFloat]()
-    var ratio:CGFloat = 1
     
     override func prepareLayout() {
         
         let delegate = self.collectionView?.delegate as! WaterfallLayoutDelegate
         
-        self.columnNumber = delegate.collectionViewColumbNum(self.collectionView!, layout: self) ?? self.columnNumber
-        self.columnPosition.appendContentsOf(Array(count: self.columnNumber, repeatedValue: 0))
-        self.itemLayoutAttributesOfSection.appendContentsOf(Array(count: self.columnNumber, repeatedValue: [UICollectionViewLayoutAttributes]()))
+        let columnNumber = delegate.collectionViewColumbNum(self.collectionView!, layout: self)
+        
+        self.columnPosition.appendContentsOf(Array(count: columnNumber, repeatedValue: 0))
+        self.itemLayoutAttributesOfSection.appendContentsOf(Array(count: columnNumber, repeatedValue: [UICollectionViewLayoutAttributes]()))
         
         let width = self.collectionView?.bounds.width
         
@@ -30,7 +29,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
             
             self.columnPosition = self.columnPosition.map({$0 + self.sectionInset.top + self.headerReferenceSize.height})
             
-            let itemWidth = (width! - self.sectionInset.left - self.sectionInset.right - self.minimumInteritemSpacing * CGFloat(self.columnNumber - 1)) / CGFloat(self.columnNumber)
+            let itemWidth = (width! - self.sectionInset.left - self.sectionInset.right - self.minimumInteritemSpacing * CGFloat(columnNumber - 1)) / CGFloat(columnNumber)
             
             for j in 0..<self.collectionView!.numberOfItemsInSection(i) {
                 
@@ -38,7 +37,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
                 
                 let layoutAttribute = UICollectionViewLayoutAttributes(forCellWithIndexPath: indexPath)
                 
-                self.ratio = delegate.collectionView(self.collectionView!, layout: self, ratioForItemAtIndexPath: indexPath) ?? self.ratio
+                let ratio = delegate.collectionView(self.collectionView!, layout: self, ratioForItemAtIndexPath: indexPath)
                 
                 let itemHeight = itemWidth / ratio
                 layoutAttribute.frame.size = CGSize(width: itemWidth, height: itemHeight)
@@ -52,7 +51,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
             
             self.footerReferenceSize = delegate.collectionView?(self.collectionView!, layout: self, referenceSizeForFooterInSection: i) ?? self.footerReferenceSize
             
-            self.columnPosition = Array(count: self.columnNumber, repeatedValue: self.columnPosition.maxElement()! + self.footerReferenceSize.height + self.sectionInset.bottom)
+            self.columnPosition = Array(count: columnNumber, repeatedValue: self.columnPosition.maxElement()! + self.footerReferenceSize.height + self.sectionInset.bottom)
         }
     }
     
@@ -83,7 +82,7 @@ class WaterfallLayout: UICollectionViewFlowLayout {
 }
 
 
-@objc protocol WaterfallLayoutDelegate: class, UICollectionViewDelegateFlowLayout {
+protocol WaterfallLayoutDelegate: class, UICollectionViewDelegateFlowLayout {
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat
     

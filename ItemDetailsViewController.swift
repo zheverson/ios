@@ -55,7 +55,7 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
     
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
-    let itemNameFont = font1
+    let itemNameFont = UIFont(name: font1, size: 15)
     let priceFont = UIFont(name: "IowanOldStyle-Bold", size: 20)
 
     override func viewDidLoad() {
@@ -96,10 +96,10 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         layout.footerReferenceSize = layout.headerReferenceSize
         
         itemSetLabel.setText = "可搭配其它套餐"
-        itemSetLabel.font = font1
+        itemSetLabel.font = UIFont(name: font1, size: 15)
         
         relatedVideoLabel.setText = "包含此产品的视频"
-        relatedVideoLabel.font = font1
+        relatedVideoLabel.font = UIFont(name: font1, size: 15)
     }
     
     private func updateItemViewInfo() {

@@ -6,6 +6,8 @@ private let reuseIdentifier = "Cell"
 class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, presentingVCDeleage{
     
     var contents = Feeds()
+    let layoutPara = layoutStruct()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +36,8 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         let feed = contents.feedsData[indexPath.item]
         cell.name.text = feed.name
         cell.title.text = feed.title
-        cell.title.font = font1
+        cell.title.font = contentTitleFont
+        cell.name.font = UIFont(name: font1, size: nameSize)
 
         let creator_thumb_url = encodeURL(host + "static/image/creator_thumbnail/" + feed.name)
         cell.creator_thumb.startDownload(creator_thumb_url)
@@ -42,6 +45,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         let video_thumb_url = encodeURL(host + "static/image/video_thumbnail/mobile/\(feed.id)" )
         cell.video_thumb.startDownload(video_thumb_url)
         
+        cell.cornerize(4)
         return cell
     }
     
@@ -52,13 +56,32 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     }
 
     // Mark: WaterfallLayoutDelegate Protocol
+    // width / height
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, ratioForItemAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        let l = collectionViewLayout as! UICollectionViewFlowLayout
+        
+        let l = collectionViewLayout as! WaterfallLayout
         let mit = l.minimumInteritemSpacing
-        let width:CGFloat = (self.view.frame.width - mit)/2
-        let ratio = width/(91+(width/contents.feedsData[indexPath.item].thumb_ratio))
-
-        return ratio
+        let left = l.sectionInset.left
+        let right = l.sectionInset.right
+        let width = (self.collectionView!.frame.width - mit - left - right) / 2
+        let labelWidth = width - 16
+        let labelHeight = contents.feedsData[indexPath.item].title.heightForText(labelWidth, font: contentTitleFont!)
+        
+        let height = labelHeight + width/contents.feedsData[indexPath.item].thumb_ratio + 56
+        
+        return width / height
+    }
+    
+    func  collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return layoutPara.itemSpace
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAtIndex section: Int) -> UIEdgeInsets {
+        return layoutPara.sectionInsets
+    }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAtIndex section: Int) -> CGFloat {
+        return layoutPara.lineSpace
     }
     
     func collectionViewColumbNum(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout) -> Int {
@@ -67,8 +90,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     // Mark: Select Cell Segue
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        
-        print("aaaa")
+
         let feed = contents.feedsData[indexPath.item]
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell
         guard let creator_image = cell.creator_thumb.image, image = cell.video_thumb.image  else {
@@ -85,11 +107,10 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         svc.creatorName = feed.name
         
         svc.creatorThumb = creator_image
-        print("aaaa")
+  
         self.presentViewController(svc, animated: true){
 
         }
-        print("bbb")
     }
     
 

@@ -27,12 +27,12 @@ class ViewMapTransition: NSObject, UIViewControllerTransitioningDelegate {
     
     func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         mydismissAnimator = InteractiveAnimator(snapshot: animateView)
-        print(2)
+ 
         return mydismissAnimator
     }
     
     func interactionControllerForDismissal(animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        print(3)
+     
         return mydismissAnimator
     }
     
@@ -44,7 +44,6 @@ class ViewMapTransition: NSObject, UIViewControllerTransitioningDelegate {
         mydismissAnimator?.interactiveComplete(percent, threshold: threshold)
         mydismissAnimator = nil
         didStart = false
-        print(8)
     }
     
     deinit {

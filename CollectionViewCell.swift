@@ -21,3 +21,8 @@ class CollectionViewCell: UICollectionViewCell {
     
 }
 
+struct layoutStruct {
+    let itemSpace:CGFloat = 10
+    let sectionInsets = UIEdgeInsetsMake(20, 10, 10, 10)
+    let lineSpace:CGFloat = 10
+}

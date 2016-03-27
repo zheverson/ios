@@ -21,11 +21,12 @@ class VideoViewController: UIViewController {
             AVObserver = player?.addPeriodicTimeObserverForInterval(CMTimeMake(1, (player!.currentTime().timescale)), queue: nil) {
                 [weak self] time in
                 guard self != nil else { return }
-                
-                let second = CGFloat(CMTimeGetSeconds(time))
-                
-                self!.videoSlider!.value = Float(second)
-                
+                let second = CMTimeGetSeconds(time)
+                dispatch_async(dispatch_get_main_queue()) {
+                    self!.videoSlider!.value = Float(second)
+                    self!.startTimeLabel.text = self!.convertTimeNumberToString(Int(second))
+                    self!.restTimeLabel.text = self!.convertTimeNumberToString(Int(self!.duration! - Float(second)))
+                }
             }
         }
     }
@@ -34,7 +35,11 @@ class VideoViewController: UIViewController {
     
     private var duration:Float? {
         didSet {
+            print(duration)
+            print(convertSecondToMinite(Int(duration!)))
             videoSlider?.maximumValue = duration!
+            startTimeLabel.text = convertTimeNumberToString(0)
+            restTimeLabel.text = convertTimeNumberToString(Int(duration!))
         }
     }
     
@@ -42,6 +47,10 @@ class VideoViewController: UIViewController {
     
     
     @IBOutlet weak var videoSlider: UISlider!
+    
+    @IBOutlet weak var startTimeLabel: UILabel!
+    
+    @IBOutlet weak var restTimeLabel: UILabel!
     
     private var layer:AVPlayerLayer?
     
@@ -69,16 +78,35 @@ class VideoViewController: UIViewController {
         
         videoSlider!.minimumValue = 0
         videoSlider?.maximumValue = duration ?? 1
-        videoSlider?.addTarget(self, action: #selector(VideoViewController.sliderValueChanged(_:)), forControlEvents: .TouchDown)
+        videoSlider?.addTarget(self, action: #selector(VideoViewController.sliderValueChanged(_:)), forControlEvents: .ValueChanged)
         videoSlider?.alpha = 0
-        
+        self.startTimeLabel.alpha = 0
+        self.restTimeLabel.alpha = 0
         if let thumbImage = thumbImage {
             //thumbImageView!.image = thumbImage
         }
    }
-
     
-
+    
+    
+    private func convertSecondToMinite(time:Int) -> (Int, Int) {
+        let second = time%60
+        let minute:Int = (time - second)/60
+        return (minute, second)
+    }
+    
+    private func convertTimeNumberToString(originalTime:Int) -> String {
+        let time = convertSecondToMinite(originalTime)
+        return timeStringFormat(time.0) + ":" + timeStringFormat(time.1)
+    }
+    
+    private func timeStringFormat(number:Int) -> String {
+        if number < 10 {
+            return "0" + String(number)
+        } else {
+            return String(number)
+        }
+    }
     
     override func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
         
@@ -99,8 +127,13 @@ class VideoViewController: UIViewController {
     }
     
     func sliderValueChanged(slider: UISlider) {
+        print("papa")
+        print(slider.value)
         let cmtime = CMTimeMakeWithSeconds(Double(slider.value), (player?.currentTime().timescale)!)
         player?.seekToTime(cmtime)
+        startTimeLabel.text = convertTimeNumberToString(Int(slider.value))
+        restTimeLabel.text = convertTimeNumberToString(Int(duration! - Float(slider.value)))
+        
     }
     
     func videoViewTapped(tap: UITapGestureRecognizer) {
@@ -121,6 +154,8 @@ class VideoViewController: UIViewController {
                 if let videoSlider = self.videoSlider {
                     UIView.animateWithDuration(0.5) {
                         videoSlider.alpha = 0
+                        self.startTimeLabel.alpha = 0
+                        self.restTimeLabel.alpha = 0
                     }
                 }
             } else if player!.rate == 1 {
@@ -130,6 +165,8 @@ class VideoViewController: UIViewController {
                 if let videoSlider = self.videoSlider {
                     UIView.animateWithDuration(0.5) {
                         videoSlider.alpha = 1
+                        self.startTimeLabel.alpha = 1
+                        self.restTimeLabel.alpha = 1
                     }
                 }
             }

@@ -53,9 +53,9 @@ class itemCell:UIView {
         
         self.addSubViews([brand,name,price])
         
-        name.font = font1
-        price.font = font1
-        brand.font = font1
+        name.font = UIFont(name: font1, size: 15)
+        price.font = UIFont(name: font1, size: 15)
+        brand.font = UIFont(name: font1, size: 15)
         brand.text = info.brand!
         name.text = info.name!
         price.text = "￥\(info.price!)"
