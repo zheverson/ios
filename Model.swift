@@ -1,38 +1,40 @@
 
 import UIKit
 
-
-class content {
-    let type:contentType
-    let id: Int
+protocol content {
+    var type:contentType {get}
+    var id: Int {get}
     
-    init(type:contentType, id:Int) {
-        self.type = type
-        self.id = id
-    }
+}
+extension content {
+    
     
     func getItemsBytes() -> NSData {
         let url = NSURL(string: host + "content/\(self.type.rawValue)/\(self.id)/items")
         return NSData(contentsOfURL: url!)!
     }
+ 
 }
 
-class videoContent: content {
+struct videoContent: content {
     
     var name: String
     var title: String
     var thumb_ratio: CGFloat
     var timeline: [CGFloat]?
     var items = [[Item]]()
+    var id: Int
+    var type: contentType
     
     init(name:String, title:String, ratio:CGFloat,type:contentType, id:Int) {
         self.name = name
         self.title = title
         self.thumb_ratio = ratio
-        super.init(type: type, id: id)
+        self.id = id
+        self.type = .video
     }
     
-    func getItems() {
+    mutating func getItems() {
         let bytes = self.getItemsBytes()
         let jsondata = try! NSJSONSerialization.JSONObjectWithData(bytes, options: .AllowFragments) as? [String:AnyObject]
         self.timeline = jsondata!["timeline"] as? [CGFloat]
@@ -50,6 +52,10 @@ class videoContent: content {
             }
             self.items.append(itemSection)
         }
+    }
+    
+    func videoThumbURL() -> NSURL {
+        return NSURL(string: host + "static/image/video_thumbnail/mobile/\(self.id)")!
     }
     
     func getSecondIndex(second:CGFloat) -> Int {
@@ -72,11 +78,13 @@ enum contentType: String {
     case article
 }
 
-struct Feeds {
+struct VideoContentArray {
     var feedsData = [videoContent]()
-    mutating func getData(url: String) {
-        let nsurl = NSURL(string: url)
-        let jsonData = json(nsurl!, type: [[String: AnyObject]]())
+    mutating func getData(url: NSURL) {
+   
+        let bytes = NSData(contentsOfURL: url)
+        
+        let jsonData = try! NSJSONSerialization.JSONObjectWithData(bytes!, options: .AllowFragments) as! [[String:AnyObject]]
         for i in jsonData {
             let name = i["name"] as! String
             let title = i["title"] as! String
@@ -90,7 +98,7 @@ struct Feeds {
 
 
 
-class Item {
+struct Item {
     var id: Int
     var color: String?
     var name: String?
@@ -100,6 +108,7 @@ class Item {
     
     var allColor = [Int: String]()
     var allColorArray = [Int]()
+    var contents: VideoContentArray?
     
     init(id:Int) {
         self.id = id
@@ -113,7 +122,7 @@ class Item {
         self.itemImageRatio = itemImageRatio
     }
     
-    func getAllColor(completion:() -> ()){
+    mutating func getAllColor(completion:([Int:String], [Int]) -> ()){
         let url = NSURL(string: host + "item/\(self.id)/colors")
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithURL(url!) {
@@ -125,9 +134,22 @@ class Item {
                 self.allColor[itemID] = color
                 self.allColorArray.append(itemID)
             }
-
-            completion()
+    
+            completion(self.allColor, self.allColorArray)
         }
         task.resume()
+    }
+    
+    func itemImageURL(type:String) -> NSURL {
+
+        return NSURL(string: imageURL + "item/\(self.id)/\(type)")!
+        
+    }
+    
+    mutating func  getContents() {
+        let url = NSURL(string: host + "item/\(self.id)/contents")
+      
+        self.contents = VideoContentArray()
+        self.contents!.getData(url!)
     }
 }

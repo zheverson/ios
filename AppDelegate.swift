@@ -1,7 +1,7 @@
  
 import UIKit
 
-let host = "http://54.223.65.44:8100/"
+
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

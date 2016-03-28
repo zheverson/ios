@@ -17,7 +17,7 @@
                         <color key="backgroundColor" red="0.92156862745098034" green="0.92156862745098034" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
                         <collectionViewLayout key="collectionViewLayout" id="mKz-2x-vYi" customClass="WaterfallLayout" customModule="ibuydeal"/>
                         <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="1t0-ZZ-oYo" customClass="CollectionViewCell" customModule="ibuydeal" customModuleProvider="target">
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="Cell" id="1t0-ZZ-oYo" customClass="WaterFallCollectionCell" customModule="ibuydeal" customModuleProvider="target">
                                 <rect key="frame" x="140" y="0.0" width="320" height="317"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -312,20 +312,47 @@
                                             <constraint firstAttribute="height" constant="90" id="nf9-xk-nLX"/>
                                         </constraints>
                                         <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="je4-lN-g1N">
-                                            <size key="itemSize" width="50" height="50"/>
+                                            <size key="itemSize" width="81" height="90"/>
                                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="relatedVideo" id="xMA-ZN-Nnr">
-                                                <rect key="frame" x="0.0" y="20" width="50" height="50"/>
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="relatedVideo" id="xMA-ZN-Nnr" customClass="ItemRelatedVideoCell" customModule="ibuydeal" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="81" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="81" height="90"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H5I-EY-kHN">
+                                                            <rect key="frame" x="0.0" y="0.0" width="81" height="60"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="60" id="KBC-Jf-558"/>
+                                                            </constraints>
+                                                        </imageView>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TFP-hI-55m">
+                                                            <rect key="frame" x="0.0" y="60" width="81" height="30"/>
+                                                            <fontDescription key="fontDescription" name="IowanOldStyle-Roman" family="Iowan Old Style" pointSize="12"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                                 </view>
+                                                <constraints>
+                                                    <constraint firstAttribute="trailing" secondItem="H5I-EY-kHN" secondAttribute="trailing" id="FJ3-uv-t9N"/>
+                                                    <constraint firstItem="TFP-hI-55m" firstAttribute="leading" secondItem="xMA-ZN-Nnr" secondAttribute="leading" id="IJl-4F-ONW"/>
+                                                    <constraint firstAttribute="trailing" secondItem="TFP-hI-55m" secondAttribute="trailing" id="Ndp-R5-PCW"/>
+                                                    <constraint firstAttribute="bottom" secondItem="TFP-hI-55m" secondAttribute="bottom" id="m9A-S5-Gnj"/>
+                                                    <constraint firstItem="H5I-EY-kHN" firstAttribute="top" secondItem="xMA-ZN-Nnr" secondAttribute="top" id="nTo-pK-DCv"/>
+                                                    <constraint firstItem="TFP-hI-55m" firstAttribute="top" secondItem="H5I-EY-kHN" secondAttribute="bottom" id="xxd-7S-rJq"/>
+                                                    <constraint firstItem="H5I-EY-kHN" firstAttribute="leading" secondItem="xMA-ZN-Nnr" secondAttribute="leading" id="zIS-tB-93C"/>
+                                                </constraints>
+                                                <connections>
+                                                    <outlet property="contentImage" destination="H5I-EY-kHN" id="jVB-Zg-GLv"/>
+                                                    <outlet property="contentTitle" destination="TFP-hI-55m" id="YNe-yN-czi"/>
+                                                </connections>
                                             </collectionViewCell>
                                         </cells>
                                     </collectionView>

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CollectionViewCell: UICollectionViewCell {
+class WaterFallCollectionCell: UICollectionViewCell {
     
     @IBOutlet weak var creator_thumb: UIImageView!
     

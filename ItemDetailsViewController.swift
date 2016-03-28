@@ -41,8 +41,8 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         didSet {
 
             colorCollection.scrollToItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0), atScrollPosition: .CenteredHorizontally, animated: true)
-            
-            itemImage!.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\((self.item?.allColorArray[itemNumber])!)/product")!)
+            let url = Item(id: (self.item?.allColorArray[itemNumber])!).itemImageURL("product")
+            itemImage?.startDownload(url)
             
             let newCell = colorCollection.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as! colorCell
 
@@ -51,7 +51,7 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
             }
         }
     }
-    var item:Item?
+    var item:Item!
     
     let colorFont = UIFont(name: "IowanOldStyle-Roman", size: 11)
     let brandFont = UIFont(name: "IowanOldStyle-Bold", size: 25)
@@ -66,34 +66,19 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         self.itemNameLabel.font = self.itemNameFont
         self.brandName.font = self.brandFont
         self.itemPrice.font = self.priceFont
+        
         updateItemViewInfo()
         
-        self.item?.getAllColor({
-            dispatch_async(dispatch_get_main_queue()){
-                self.colorCollection.reloadData()
-            }
-        })
-        
-       itemImageContainerView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!).active = true
-        
-        itemImage = UIImageView()
-        itemImageContainerView.addSubview(itemImage!)
-        itemImage?.fillInSuperView()
-        itemImage?.image = itemImageData
+        getItemDetailInfo()
+        itemImageSetup()
         setupTransitionDelegate()
-        
+        relatedVideoSetup()
         // like and cart button
-        cartButton.startDownloadImage(NSURL(string: "http://54.223.65.44:8100/static/image/util/cart")!)
+        cartButton.startDownloadImage(cartImageURL)
 
-        likeButton.startDownloadImage(NSURL(string: "http://54.223.65.44:8100/static/image/util/like")!)
+        likeButton.startDownloadImage(likeImageURL)
         
-        // color view
-        colorCollection.dataSource = self
-        colorCollection.delegate = self
-        let layout = colorCollection.collectionViewLayout as! UICollectionViewFlowLayout
-        let itemSize = layout.itemSize
-        layout.headerReferenceSize = CGSize(width: (colorCollection.frame.width - itemSize.width)/2, height: colorCollection.frame.height)
-        layout.footerReferenceSize = layout.headerReferenceSize
+        colorCollectionSetup()
         
         itemSetLabel.setText = "可搭配其它套餐"
         itemSetLabel.font = UIFont(name: font1, size: 15)
@@ -102,11 +87,46 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         relatedVideoLabel.font = UIFont(name: font1, size: 15)
     }
     
+    private func getItemDetailInfo() {
+        self.item.getAllColor({
+            a, b in
+            self.item.allColor = a
+            self.item.allColorArray = b
+            dispatch_async(dispatch_get_main_queue()){
+                self.colorCollection.reloadData()
+            }
+        })
+    }
+    
+    private func itemImageSetup() {
+        itemImageContainerView.heightAnchor.constraintEqualToAnchor(itemImageContainerView.widthAnchor, multiplier: 1/(item?.itemImageRatio!)!).active = true
+        
+        itemImage = UIImageView()
+        itemImageContainerView.addSubview(itemImage!)
+        itemImage?.fillInSuperView()
+        itemImage?.image = itemImageData
+    }
+    
+    private func colorCollectionSetup(){
+        // color view
+        colorCollection.dataSource = self
+        colorCollection.delegate = self
+        let layout = colorCollection.collectionViewLayout as! UICollectionViewFlowLayout
+        let itemSize = layout.itemSize
+        layout.headerReferenceSize = CGSize(width: (colorCollection.frame.width - itemSize.width)/2, height: colorCollection.frame.height)
+        layout.footerReferenceSize = layout.headerReferenceSize
+    }
+    
     private func updateItemViewInfo() {
         
         self.brandName.setText = (item?.brand)!
         self.itemPrice.setText = "￥\((item?.price)!)"
         self.itemNameLabel.setText = (item?.name)!
+    }
+    
+    private func relatedVideoSetup() {
+        self.relatedVideoCollectionView.dataSource = self
+        self.relatedVideoCollectionView.delegate = self
     }
 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
@@ -116,11 +136,12 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case colorCollection:
-            return (item?.allColorArray.count)!
+            return item.allColorArray.count
         case itemSetCollectionView:
             return 0
         case relatedVideoCollectionView:
-            return 0
+            guard let num = item.contents?.feedsData.count else { return 0}
+            return num
         default:
             return 0
         }
@@ -132,13 +153,20 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         case colorCollection:
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("colorCell", forIndexPath: indexPath) as! colorCell
             
-            
             let colorName = item?.allColor[(item?.allColorArray[indexPath.item])!]
-            cell.colorImage.startDownload(NSURL(string: "http://54.223.65.44:8100/static/image/item/\(item!.allColorArray[indexPath.item])/color")!)
+            let url = Item(id: item!.allColorArray[indexPath.item]).itemImageURL("color")
+            cell.colorImage.startDownload(url)
             cell.colorImage.layer.masksToBounds = true
             cell.colorImage.layer.cornerRadius = cell.colorImage.frame.width/2
             cell.colorName.text = colorName
             cell.colorName.font = colorFont
+            return cell
+        case relatedVideoCollectionView:
+            print(999)
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("relatedVideo", forIndexPath: indexPath) as! ItemRelatedVideoCell
+            let content = item.contents?.feedsData[indexPath.item]
+            cell.contentImage.startDownload((content!.videoThumbURL()))
+            cell.contentTitle.text = content?.title
             return cell
         default:
             return UICollectionViewCell()
@@ -175,14 +203,37 @@ class ItemDetailsViewController: UIViewController,UICollectionViewDataSource, UI
         }
     }
     
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        switch collectionView {
+        case relatedVideoCollectionView:
+            let height:CGFloat = 60
+            let width = height * (item.contents?.feedsData[indexPath.item].thumb_ratio)!
+            return CGSize(width: width, height: height + 30)
+        case colorCollection:
+            let itemSize = (collectionViewLayout as! UICollectionViewFlowLayout).itemSize
+            return itemSize
+        default:
+            print("not possible")
+            return CGSizeZero
+        }
+    }
+    
     func scrollViewWillBeginDragging(scrollView: UIScrollView) {
         
-        if scrollView === colorCollection {
+        switch scrollView {
+        case colorCollection:
             let v = scrollView as! UICollectionView
             let cell = v.cellForItemAtIndexPath(NSIndexPath(forItem: itemNumber, inSection: 0)) as? colorCell
             if cell != nil {
                 cell!.colorName.textColor = UIColor.blackColor()
             }
+        // get data
+        case scrollContainerView:
+            guard item.contents == nil else { return }
+            item.getContents()
+            relatedVideoCollectionView.reloadData()
+        default:
+            break
         }
     }
     

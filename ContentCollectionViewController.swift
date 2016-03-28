@@ -5,13 +5,13 @@ private let reuseIdentifier = "Cell"
 
 class ContentCollectionViewController: UICollectionViewController, WaterfallLayoutDelegate, presentingVCDeleage{
     
-    var contents = Feeds()
+    var contents = VideoContentArray()
     let layoutPara = layoutStruct()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        contents.getData(host + "user")
+        contents.getData(NSURL(string: host + "user")!)
     }
     
     // Mark: UICollectionView DataSource Protocol
@@ -27,7 +27,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! CollectionViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! WaterFallCollectionCell
         
         if cell.creator_thumb.image == nil {
             cell.creator_thumb.cornerize(nil)
@@ -42,8 +42,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
         let creator_thumb_url = encodeURL(host + "static/image/creator_thumbnail/" + feed.name)
         cell.creator_thumb.startDownload(creator_thumb_url)
 
-        let video_thumb_url = encodeURL(host + "static/image/video_thumbnail/mobile/\(feed.id)" )
-        cell.video_thumb.startDownload(video_thumb_url)
+        cell.video_thumb.startDownload(feed.videoThumbURL())
         
         cell.cornerize(4)
         return cell
@@ -51,8 +50,8 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     // cancel cell image download
     override func collectionView(collectionView: UICollectionView, didEndDisplayingCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        (cell as! CollectionViewCell).creator_thumb.cancelDownload()
-        (cell as! CollectionViewCell).video_thumb.cancelDownload()
+        (cell as! WaterFallCollectionCell).creator_thumb.cancelDownload()
+        (cell as! WaterFallCollectionCell).video_thumb.cancelDownload()
     }
 
     // Mark: WaterfallLayoutDelegate Protocol
@@ -92,7 +91,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
 
         let feed = contents.feedsData[indexPath.item]
-        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! CollectionViewCell
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! WaterFallCollectionCell
         guard let creator_image = cell.creator_thumb.image, image = cell.video_thumb.image  else {
             self.networkAlertShow()
             return
@@ -117,7 +116,7 @@ class ContentCollectionViewController: UICollectionViewController, WaterfallLayo
     
     func viewToBeAnimated() -> UIView {
         let path = collectionView?.indexPathsForSelectedItems()
-        let cell = (self.collectionView?.cellForItemAtIndexPath(path![0]))! as! CollectionViewCell
+        let cell = (self.collectionView?.cellForItemAtIndexPath(path![0]))! as! WaterFallCollectionCell
         let image = cell.video_thumb.image
         let v = UIImageView(image: image)
         v.frame = cell.video_thumb.convertRect(cell.video_thumb.bounds, toView: nil)

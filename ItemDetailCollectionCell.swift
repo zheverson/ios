@@ -18,3 +18,10 @@ class colorCell: UICollectionViewCell {
 
 }
 
+class ItemRelatedVideoCell: UICollectionViewCell {
+    
+    @IBOutlet weak var contentImage: UIImageView!
+    
+    @IBOutlet weak var contentTitle: UILabel!
+    
+}

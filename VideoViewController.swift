@@ -35,8 +35,7 @@ class VideoViewController: UIViewController {
     
     private var duration:Float? {
         didSet {
-            print(duration)
-            print(convertSecondToMinite(Int(duration!)))
+
             videoSlider?.maximumValue = duration!
             startTimeLabel.text = convertTimeNumberToString(0)
             restTimeLabel.text = convertTimeNumberToString(Int(duration!))
@@ -127,8 +126,7 @@ class VideoViewController: UIViewController {
     }
     
     func sliderValueChanged(slider: UISlider) {
-        print("papa")
-        print(slider.value)
+
         let cmtime = CMTimeMakeWithSeconds(Double(slider.value), (player?.currentTime().timescale)!)
         player?.seekToTime(cmtime)
         startTimeLabel.text = convertTimeNumberToString(Int(slider.value))
